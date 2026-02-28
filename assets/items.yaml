@@ -1,0 +1,239 @@
+items:
+  3392:
+    name: Royal Helmet
+    value: 25000
+  3391:
+    name: Crusader Helmet
+    value: 6000
+  3369:
+    name: Warrior Helmet
+    value: 5000
+  3385:
+    name: Crown Helmet
+    value: 2500
+  3384:
+    name: Dark Helmet
+    value: 200
+  3351:
+    name: Steel Helmet
+    value: 293
+  3373:
+    name: Strange Helmet
+    value: 500
+  3367:
+    name: Viking Helmet
+    value: 66
+  3354:
+    name: Brass Helmet
+    value: 30
+  3574:
+    name: Mystic Turban
+    value: 150
+  3353:
+    name: Iron Helmet
+    value: 150
+  3390:
+    name: Horned Helmet
+  3356:
+    name: Devil Helmet
+  3381:
+    name: Crown Armor
+    value: 12000
+  3370:
+    name: Knight Armor
+    value: 5000
+  3567:
+    name: Blue Robe
+    value: 8000
+  3380:
+    name: Noble Armor
+    value: 900
+  3383:
+    name: Dark Armor
+    value: 400
+  3357:
+    name: Plate Armor
+    value: 400
+  3377:
+    name: Scale Armor
+    value: 75
+  3359:
+    name: Brass Armor
+    value: 150
+  3358:
+    name: Chain Armor
+    value: 70
+  3366:
+    name: Magic Plate Armor
+  3386:
+    name: Dragon Scale Mail
+  3360:
+    name: Golden Armor
+  3566:
+    name: Red Robe
+  3364:
+    name: Golden Legs
+  3382:
+    name: Crown Legs
+    value: 12000
+  3371:
+    name: Knight Legs
+    value: 5000
+  3557:
+    name: Plate Legs
+    value: 115
+  3372:
+    name: Brass Legs
+    value: 49
+  3554:
+    name: Steel Boots
+  3079:
+    name: Boots of Haste
+    value: 28000
+  3414:
+    name: Mastermind Shield
+  3442:
+    name: Tempest Shield
+  3420:
+    name: Demon Shield
+  3434:
+    name: Vampire Shield
+    value: 15000
+  3436:
+    name: Medusa Shield
+  3419:
+    name: Crown Shield
+    value: 8000
+  3428:
+    name: Tower Shield
+    value: 7000
+  3416:
+    name: Dragon Shield
+    value: 3500
+  3415:
+    name: Guardian Shield
+    value: 2000
+  3418:
+    name: Beholder Shield
+    value: 1200
+  3422:
+    name: Ancient Shield
+    value: 900
+  3425:
+    name: Dwarven Shield
+    value: 100
+  3421:
+    name: Dark Shield
+    value: 200
+  3440:
+    name: Scarab Shield
+  3413:
+    name: Battle Shield
+    value: 95
+  3431:
+    name: Viking Shield
+    value: 85
+  3409:
+    name: Steel Shield
+    value: 80
+  3429:
+    name: Black Shield
+    value: 800 # TODO verify
+  3410:
+    name: Plate Shield
+    value: 45
+  3284:
+    name: Ice Rapier
+    value: 1000
+  3281:
+    name: Giant Sword
+    value: 16000
+  3295:
+    name: Bright Sword
+  3280:
+    name: Fire Sword
+    value: 4000
+  3265:
+    name: Two-handed Sword
+    value: 450
+  3301:
+    name: Broad Sword
+    value: 500
+  3297:
+    name: Serpent Sword
+    value: 900
+  3271:
+    name: Spike Sword
+    value: 1000
+  3307:
+    name: Scimitar
+    value: 150
+  3299:
+    name: Poison Dagger
+    value: 50
+  3285:
+    name: Longsword
+    value: 51
+  3264:
+    name: Sword
+    value: 25
+  3326:
+    name: Foil
+    value: 80
+  3302:
+    name: Dragon Lance
+    value: 9000
+  3315:
+    name: Guardian Halberd
+    value: 16000 # TODO verify
+  3320:
+    name: Fire Axe
+    value: 7500
+  3275:
+    name: Double Axe
+    value: 260
+  3269:
+    name: Halberd
+    value: 400
+  3313:
+    name: Obsidian Lance
+    value: 500
+  3318:
+    name: Knight Axe
+    value: 2000
+  3266:
+    name: Battle Axe
+    value: 80
+  3276:
+    name: Hatchet
+    value: 25
+  3311:
+    name: Clerical Mace
+    value: 170
+  3208:
+    name: Battle Hammer
+    value: 120
+  3286:
+    name: Mace
+    value: 30
+  3325:
+    name: Golden Mace
+  3340:
+    name: Heavy Mace
+  3332:
+    name: Hammer of Wrath
+  3279:
+    name: War Hammer
+    value: 1200
+  3324:
+    name: Skull Staff
+    value: 3500
+  3322:
+    name: Dragon Hammer
+    value: 1500
+  3350:
+    name: Bow
+    value: 130
+  3349:
+    name: Crossbow
+    value: 160
