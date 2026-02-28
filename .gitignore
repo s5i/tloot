@@ -4,6 +4,7 @@
 !.gitignore
 !*.go
 !*/
+!static/**
 
 !/go.sum
 !/go.mod

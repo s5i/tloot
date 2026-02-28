@@ -2,238 +2,323 @@ items:
   3392:
     name: Royal Helmet
     value: 25000
+    category: Helmets
   3391:
     name: Crusader Helmet
     value: 6000
+    category: Helmets
   3369:
     name: Warrior Helmet
     value: 5000
+    category: Helmets
   3385:
     name: Crown Helmet
     value: 2500
+    category: Helmets
   3384:
     name: Dark Helmet
     value: 200
+    category: Helmets
   3351:
     name: Steel Helmet
     value: 293
+    category: Helmets
   3373:
     name: Strange Helmet
     value: 500
+    category: Helmets
   3367:
     name: Viking Helmet
     value: 66
+    category: Helmets
   3354:
     name: Brass Helmet
     value: 30
+    category: Helmets
   3574:
     name: Mystic Turban
     value: 150
+    category: Helmets
   3353:
     name: Iron Helmet
     value: 150
+    category: Helmets
   3390:
     name: Horned Helmet
+    category: Helmets
   3356:
     name: Devil Helmet
+    category: Helmets
   3381:
     name: Crown Armor
     value: 12000
+    category: Armors
   3370:
     name: Knight Armor
     value: 5000
+    category: Armors
   3567:
     name: Blue Robe
     value: 8000
+    category: Armors
   3380:
     name: Noble Armor
     value: 900
+    category: Armors
   3383:
     name: Dark Armor
     value: 400
+    category: Armors
   3357:
     name: Plate Armor
     value: 400
+    category: Armors
   3377:
     name: Scale Armor
     value: 75
+    category: Armors
   3359:
     name: Brass Armor
     value: 150
+    category: Armors
   3358:
     name: Chain Armor
     value: 70
+    category: Armors
   3366:
     name: Magic Plate Armor
+    category: Armors
   3386:
     name: Dragon Scale Mail
+    category: Armors
   3360:
     name: Golden Armor
+    category: Armors
   3566:
     name: Red Robe
+    category: Armors
   3364:
     name: Golden Legs
+    category: Legs
   3382:
     name: Crown Legs
     value: 12000
+    category: Legs
   3371:
     name: Knight Legs
     value: 5000
+    category: Legs
   3557:
     name: Plate Legs
     value: 115
+    category: Legs
   3372:
     name: Brass Legs
     value: 49
+    category: Legs
   3554:
     name: Steel Boots
+    category: Boots
   3079:
     name: Boots of Haste
     value: 28000
+    category: Boots
   3414:
     name: Mastermind Shield
+    category: Shields
   3442:
     name: Tempest Shield
+    category: Shields
   3420:
     name: Demon Shield
+    category: Shields
   3434:
     name: Vampire Shield
     value: 15000
+    category: Shields
   3436:
     name: Medusa Shield
+    category: Shields
   3419:
     name: Crown Shield
     value: 8000
+    category: Shields
   3428:
     name: Tower Shield
     value: 7000
+    category: Shields
   3416:
     name: Dragon Shield
     value: 3500
+    category: Shields
   3415:
     name: Guardian Shield
     value: 2000
+    category: Shields
   3418:
     name: Beholder Shield
     value: 1200
+    category: Shields
   3422:
     name: Ancient Shield
     value: 900
+    category: Shields
   3425:
     name: Dwarven Shield
     value: 100
+    category: Shields
   3421:
     name: Dark Shield
     value: 200
+    category: Shields
   3440:
     name: Scarab Shield
+    category: Shields
   3413:
     name: Battle Shield
     value: 95
+    category: Shields
   3431:
     name: Viking Shield
     value: 85
+    category: Shields
   3409:
     name: Steel Shield
     value: 80
+    category: Shields
   3429:
     name: Black Shield
     value: 800 # TODO verify
+    category: Shields
   3410:
     name: Plate Shield
     value: 45
+    category: Shields
   3284:
     name: Ice Rapier
     value: 1000
+    category: Swords
   3281:
     name: Giant Sword
     value: 16000
+    category: Swords
   3295:
     name: Bright Sword
+    category: Swords
   3280:
     name: Fire Sword
     value: 4000
+    category: Swords
   3265:
     name: Two-handed Sword
     value: 450
+    category: Swords
   3301:
     name: Broad Sword
     value: 500
+    category: Swords
   3297:
     name: Serpent Sword
     value: 900
+    category: Swords
   3271:
     name: Spike Sword
     value: 1000
+    category: Swords
   3307:
     name: Scimitar
     value: 150
+    category: Swords
   3299:
     name: Poison Dagger
     value: 50
+    category: Swords
   3285:
     name: Longsword
     value: 51
+    category: Swords
   3264:
     name: Sword
     value: 25
+    category: Swords
   3326:
     name: Foil
     value: 80
+    category: Swords
   3302:
     name: Dragon Lance
     value: 9000
+    category: Axes
   3315:
     name: Guardian Halberd
     value: 16000 # TODO verify
+    category: Axes
   3320:
     name: Fire Axe
     value: 7500
+    category: Axes
   3275:
     name: Double Axe
     value: 260
+    category: Axes
   3269:
     name: Halberd
     value: 400
+    category: Axes
   3313:
     name: Obsidian Lance
     value: 500
+    category: Axes
   3318:
     name: Knight Axe
     value: 2000
+    category: Axes
   3266:
     name: Battle Axe
     value: 80
+    category: Axes
   3276:
     name: Hatchet
     value: 25
+    category: Axes
   3311:
     name: Clerical Mace
     value: 170
+    category: Clubs
   3208:
     name: Battle Hammer
     value: 120
+    category: Clubs
   3286:
     name: Mace
     value: 30
+    category: Clubs
   3325:
     name: Golden Mace
+    category: Clubs
   3340:
     name: Heavy Mace
+    category: Clubs
   3332:
     name: Hammer of Wrath
+    category: Clubs
   3279:
     name: War Hammer
     value: 1200
+    category: Clubs
   3324:
     name: Skull Staff
     value: 3500
+    category: Clubs
   3322:
     name: Dragon Hammer
     value: 1500
+    category: Clubs
   3350:
     name: Bow
     value: 130
+    category: Distance
   3349:
     name: Crossbow
     value: 160
+    category: Distance

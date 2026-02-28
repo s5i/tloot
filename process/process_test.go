@@ -20,13 +20,13 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func BenchmarkProcess(b *testing.B) {
+func BenchmarkParallel(b *testing.B) {
 	img := loadImage("testdata/shrimps.png")
 	for b.Loop() {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		p := Parallel(ctx, img, items, sprites)
+		p := NewParallelProcessor(ctx, img, items, sprites)
 		for {
 			_, err := p.Next()
 			if errors.Is(err, io.EOF) {

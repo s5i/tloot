@@ -12,6 +12,14 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+var precision = 0.85
+
+type ProcessResult struct {
+	Item    ItemConfig
+	Count   int
+	Elapsed time.Duration
+}
+
 type ParallelProcessor struct {
 	results chan ProcessResult
 	error   chan error
@@ -31,13 +39,7 @@ func (p *ParallelProcessor) Next() (ProcessResult, error) {
 	}
 }
 
-type ProcessResult struct {
-	Item    ItemConfig
-	Count   int
-	Elapsed time.Duration
-}
-
-func Parallel(ctx context.Context, img image.Image, items map[int]ItemConfig, sprites SpriteMap) *ParallelProcessor {
+func NewParallelProcessor(ctx context.Context, img image.Image, items map[int]ItemConfig, sprites SpriteMap) *ParallelProcessor {
 	p := &ParallelProcessor{
 		results: make(chan ProcessResult, len(items)),
 		error:   make(chan error, 1),
@@ -50,7 +52,7 @@ func Parallel(ctx context.Context, img image.Image, items map[int]ItemConfig, sp
 	for k, v := range items {
 		t := time.Now()
 		eg.Go(func() error {
-			pp, err := l.FindAll(sprites[k], 0.85)
+			pp, err := l.FindAll(sprites[k], precision)
 			if err != nil {
 				return err
 			}
@@ -77,23 +79,31 @@ func Parallel(ctx context.Context, img image.Image, items map[int]ItemConfig, sp
 	return p
 }
 
-func Serial(ctx context.Context, img image.Image, items map[int]ItemConfig, sprites SpriteMap) ([]ProcessResult, error) {
-	var ret []ProcessResult
-	l := lookup.NewLookup(img)
+type CallbackProcessor struct {
+	items   map[int]ItemConfig
+	sprites SpriteMap
+	lookup  *lookup.Lookup
+}
 
-	for k, v := range items {
-		t := time.Now()
-		pp, err := l.FindAll(sprites[k], 0.85)
-		if err != nil {
-			return nil, err
-		}
+func (p *CallbackProcessor) Process(item int) (ProcessResult, error) {
+	t := time.Now()
 
-		ret = append(ret, ProcessResult{
-			Item:    v,
-			Count:   len(pp),
-			Elapsed: time.Since(t),
-		})
+	pp, err := p.lookup.FindAll(p.sprites[item], precision)
+	if err != nil {
+		return ProcessResult{}, err
 	}
 
-	return ret, nil
+	return ProcessResult{
+		Item:    p.items[item],
+		Count:   len(pp),
+		Elapsed: time.Since(t),
+	}, nil
+}
+
+func NewCallbackProcessor(img image.Image, items map[int]ItemConfig, sprites SpriteMap) *CallbackProcessor {
+	return &CallbackProcessor{
+		items:   items,
+		sprites: sprites,
+		lookup:  lookup.NewLookup(img),
+	}
 }
