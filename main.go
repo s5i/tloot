@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"image"
 	"io"
@@ -11,12 +12,28 @@ import (
 	_ "image/png"
 )
 
+var (
+	path = flag.String("path", "testdata/shrimps.png", "Path to loot image.")
+)
+
 func main() {
 	ctx := context.Background()
 	items := LoadItems()
 	sprites := LoadSprites()
+	path := *path
 
-	img := loadImage("testdata/shrimps.png")
+	imageFile, err := os.Open(path)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to open %q: %v", path, err)
+		os.Exit(1)
+	}
+	defer imageFile.Close()
+
+	img, _, err := image.Decode(imageFile)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to decode %q: %v", path, err)
+		os.Exit(1)
+	}
 
 	p := NewProcess(ctx, img, items, sprites)
 	total := 0
@@ -41,11 +58,4 @@ func main() {
 			total += r.Count * r.Item.Value
 		}
 	}
-}
-
-func loadImage(imgPath string) image.Image {
-	imageFile, _ := os.Open(imgPath)
-	defer imageFile.Close()
-	img, _, _ := image.Decode(imageFile)
-	return img
 }

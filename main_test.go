@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"errors"
+	"image"
 	"io"
+	"os"
 	"testing"
 
 	_ "image/png"
@@ -35,4 +37,11 @@ func BenchmarkProcess(b *testing.B) {
 			}
 		}
 	}
+}
+
+func loadImage(imgPath string) image.Image {
+	imageFile, _ := os.Open(imgPath)
+	defer imageFile.Close()
+	img, _, _ := image.Decode(imageFile)
+	return img
 }
