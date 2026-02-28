@@ -1,4 +1,4 @@
-package main
+package process
 
 import (
 	"context"
@@ -35,7 +35,7 @@ type ProcessResult struct {
 	Count int
 }
 
-func NewProcess(ctx context.Context, img image.Image, items map[int]ItemConfig, sprites SpriteMap) *Processor {
+func New(ctx context.Context, img image.Image, items map[int]ItemConfig, sprites SpriteMap) *Processor {
 	p := &Processor{
 		results: make(chan ProcessResult, len(items)),
 		error:   make(chan error, 1),

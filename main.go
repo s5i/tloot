@@ -9,17 +9,19 @@ import (
 	"io"
 	"os"
 
+	"github.com/s5i/tloot/process"
+
 	_ "image/png"
 )
 
 var (
-	path = flag.String("path", "testdata/shrimps.png", "Path to loot image.")
+	path = flag.String("path", "process/testdata/shrimps.png", "Path to loot image.")
 )
 
 func main() {
 	ctx := context.Background()
-	items := LoadItems()
-	sprites := LoadSprites()
+	items := process.LoadItems()
+	sprites := process.LoadSprites()
 	path := *path
 
 	imageFile, err := os.Open(path)
@@ -35,7 +37,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	p := NewProcess(ctx, img, items, sprites)
+	p := process.New(ctx, img, items, sprites)
 	total := 0
 
 	for {
