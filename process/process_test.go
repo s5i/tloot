@@ -26,7 +26,7 @@ func BenchmarkProcess(b *testing.B) {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		p := New(ctx, img, items, sprites)
+		p := Parallel(ctx, img, items, sprites)
 		for {
 			_, err := p.Next()
 			if errors.Is(err, io.EOF) {
