@@ -3,54 +3,28 @@
 <head>
     <meta charset="utf-8" />
     <script src="wasm_exec.js"></script>
-    <script>
-        tlootWASM = {};
-        tlootWASM.onReady = () => {
-            const items = tlootWASM.itemsMap();
-            console.log(items);
-
-            window.addEventListener("paste", (event) => {
-                event.preventDefault();
-                if (event.clipboardData.files.length == 0) {
-                    return;
-                }
-                const f = event.clipboardData.files[0];
-                if (f.type != "image/png") {
-                    return;
-                }
-
-                const items = tlootWASM.itemsMap();
-                const onError = (error) => {
-                    console.log(error);
-                };
-                const onItemCountReady = (id, count) => {
-                    if (count > 0) {
-                        console.log(`${items[id].name}: ${count} x ${items[id].value} gp`);
-                    }
-                };
-                const onCallbackReady = (callback) => {
-                    Object.entries(items).forEach(([_, item]) => {
-                        console.log(`Processing ${item.name}...`);
-                        callback(onItemCountReady, onError, item.id);
-                    });
-                };
-                const onImageReady = (imgBytes) => {
-                    const start = performance.now();
-                    tlootWASM.processImage(onCallbackReady, onError, imgBytes);
-                    console.log(`Processing ${performance.now() - start}ms.`);
-                }
-
-                f.bytes().then(onImageReady);
-            });
-        };
-
-        const go = new Go();
-        WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
-            go.run(result.instance);
-        });
-    </script>
+    <script src="main.js"></script>
 </head>
 
-<body></body>
+<body>
+    <span>
+        <div>Instructions:</div>
+        <div>1. Take a partial screenshot (Win + Shift + S) of the loot; see example below.</div>
+        <div>2. Hit Ctrl + V.</div>
+        <div>3. Wait.</div>
+    </span>
+    <hr>
+    <span>
+        <div id="status">Status: waiting for the screenshot...</div>
+    </span>
+    <hr>
+    <span id="found"></span>
+    <hr>
+    <span>
+        <div>
+            <img id="image" src="example.png">
+        </div>
+    </span>
+</body>
 
 </html>
