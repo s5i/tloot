@@ -4,9 +4,9 @@ go 1.25.3
 
 require (
 	github.com/deluan/lookup v0.0.8
+	github.com/s5i/goutil/version v0.0.0
 	golang.org/x/sync v0.19.0
 	gopkg.in/yaml.v2 v2.4.0
-	honnef.co/go/js/dom/v2 v2.0.0-20250304181735-b5e52f05e89d
 )
 
 require (

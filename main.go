@@ -9,17 +9,33 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/s5i/goutil/version"
 )
 
 var (
-	listen = flag.String("listen", ":9090", "HTTP server listen spec.")
+	fConfig  = flag.String("config", defaultConfigPath(), "Path to config file.")
+	fVersion = flag.Bool("version", false, "When true, print version and exit.")
 )
 
 func main() {
+	flag.Parse()
+
+	if *fVersion {
+		fmt.Fprintln(os.Stderr, version.Get())
+		os.Exit(0)
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	listen := *listen
+	cfg, err := ReadConfig(*fConfig)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	listen := cfg.ProvidedEndpoints.UI
 	mux := http.NewServeMux()
 	mux.Handle("/", http.HandlerFunc(staticHandler))
 

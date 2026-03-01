@@ -1,0 +1,2 @@
+provided_endpoints:
+  ui: ":8080"
