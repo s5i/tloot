@@ -9,6 +9,7 @@ RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -C /src/ -o /build/tloot.app -ldf
 
 FROM alpine
 COPY --from=build /src/entrypoint.sh /app/entrypoint.sh
+COPY --from=build /src/example_config.yaml /app/example_config.yaml
 COPY --from=build /build/tloot.app /app/tloot.app
 CMD [ "/app/entrypoint.sh" ]
 ENTRYPOINT /app/entrypoint.sh

@@ -85,17 +85,36 @@ type CallbackProcessor struct {
 	lookup  *lookup.Lookup
 }
 
+func overlaps(a, b lookup.GPoint, size image.Rectangle) bool {
+	return a.X >= b.X && a.X < b.X+size.Dx() && a.Y >= b.Y && a.Y < b.Y+size.Dy()
+}
+
 func (p *CallbackProcessor) Process(item int) (ProcessResult, error) {
 	t := time.Now()
 
-	pp, err := p.lookup.FindAll(p.sprites[item], precision)
+	found, err := p.lookup.FindAll(p.sprites[item], precision)
 	if err != nil {
 		return ProcessResult{}, err
 	}
 
+	size := p.sprites[item].Bounds()
+	dedupe := map[lookup.GPoint]bool{}
+	for _, a := range found {
+		dupe := false
+		for b := range dedupe {
+			if overlaps(a, b, size) || overlaps(b, a, size) {
+				dupe = true
+				break
+			}
+		}
+		if !dupe {
+			dedupe[a] = true
+		}
+	}
+
 	return ProcessResult{
 		Item:    p.items[item],
-		Count:   len(pp),
+		Count:   len(dedupe),
 		Elapsed: time.Since(t),
 	}, nil
 }
