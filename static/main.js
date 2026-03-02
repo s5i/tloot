@@ -28,11 +28,71 @@ tlootWASM = {
     getItemName: (id) => {
         return tlootWASM.items[id].name;
     },
-    getItemValue: (id) => {
-        return tlootWASM.items[id].value;
+    getItemEnabled: (id) => {
+        return document.getElementById(`${id}_enabled`).checked;
     },
-    getItemCategory: (id) => {
-        return tlootWASM.items[id].category;
+    getItemValue: (id) => {
+        return document.getElementById(`${id}_value`).value;
+    },
+    loadItemSettings: () => {
+        const items = tlootWASM.items;
+
+        const categories = Object.fromEntries(
+            Object.values(items)
+                .map((item) => item.category)
+                .filter((v, idx, arr) => { return arr.indexOf(v) === idx; })
+                .sort()
+                .map((category) => [
+                    category,
+                    Object.values(items)
+                        .filter((v) => { return v.category === category; })
+                        .sort((a, b) => a.name == b.name ? 0 : a.name < b.name ? -1 : 1)
+                        .map((item) => item.id),
+                ])
+        );
+
+        const settingsParent = document.getElementById('itemSettings');
+        settingsParent.innerHTML = '';
+
+        Object.entries(categories).forEach(([category, ids]) => {
+            const cDiv = document.createElement('div');
+            cDiv.classList.add('item-category')
+            settingsParent.appendChild(cDiv);
+
+            const tDiv = document.createElement('div');
+            tDiv.classList.add('bold');
+            tDiv.innerText = category;
+            cDiv.appendChild(tDiv);
+
+            ids.forEach((id) => {
+                const iDiv = document.createElement('div');
+                iDiv.classList.add('item-item');
+                cDiv.appendChild(iDiv);
+
+                const lSpan = document.createElement('span');
+                const rSpan = document.createElement('span');
+                lSpan.classList.add('item-colspan');
+                rSpan.classList.add('item-colspan');
+                iDiv.appendChild(lSpan);
+                iDiv.appendChild(rSpan);
+
+                const iChk = document.createElement('input');
+                iChk.type = 'checkbox';
+                iChk.id = `${id}_enabled`;
+                iChk.checked = items[id].enabled;
+                lSpan.appendChild(iChk);
+
+                const iTxt = document.createTextNode(items[id].name);
+                lSpan.appendChild(iTxt);
+
+                const iVal = document.createElement('input');
+                iVal.type = 'number';
+                iVal.id = `${id}_value`;
+                iVal.value = items[id].value;
+                iVal.classList.add('item-value')
+                rSpan.appendChild(iVal);
+            });
+        });
     },
     items: {},
 };
@@ -44,7 +104,8 @@ tlootWASM.onReady = () => {
         return
     }
     tlootWASM.items = itemsRet.result;
-    console.log(tlootWASM.items);
+
+    tlootWASM.loadItemSettings();
 
     window.addEventListener("paste", (event) => {
         event.preventDefault();
@@ -102,7 +163,9 @@ tlootWASM.onReady = () => {
         let processAllItems = (handler) => {
             let promises = [];
             Object.entries(tlootWASM.items).forEach(([_, item]) => {
-                promises.push(processSingleItem(handler, item));
+                if (tlootWASM.getItemEnabled(item.id)) {
+                    promises.push(processSingleItem(handler, item));
+                }
             });
 
             return Promise.all(promises);

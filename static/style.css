@@ -17,16 +17,49 @@ td {
   text-align: left;
 }
 
-img.fit {
-  width: 100%;
-  height: auto;
+.bold {
+  font-weight: bold;
 }
 
-td.no-stretch {
+.no-stretch {
   width: 1%;
   white-space: nowrap;
 }
 
-div.bold {
-  font-weight: bold;
+.fit {
+  width: 100%;
+  height: auto;
+}
+
+td.item-settings {
+  width: 50%;
+}
+
+span.item-settings {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.item-colspan {
+  padding: 3px;
+}
+
+.item-category {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  padding: 5px;
+  border-style: groove;
+}
+
+.item-item {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  padding: 2px;
+}
+
+.item-value {
+  width: 60px;
 }
