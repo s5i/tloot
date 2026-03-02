@@ -1,7 +1,5 @@
 tlootWASM = {};
 tlootWASM.onReady = () => {
-    const items = tlootWASM.itemsMap();
-
     const setStatus = (s) => {
         let status = `Status: ${s}`;
         console.log(status);
@@ -21,65 +19,72 @@ tlootWASM.onReady = () => {
         img.src = src;
     };
 
+    const itemsRet = tlootWASM.getItems();
+    if (itemsRet.error) {
+        setStatus(`getItems error: ${itemsRet.error}`);
+        return
+    }
+    const items = itemsRet.result;
+
     window.addEventListener("paste", (event) => {
         event.preventDefault();
-        const onError = (error) => {
-            setStatus(error);
-        };
 
         if (event.clipboardData.files.length == 0) {
-            onError("error - non-screenshot paste detected.")
+            setStatus("error - non-screenshot paste detected.")
             return;
         }
+
         const f = event.clipboardData.files[0];
         if (f.type != "image/png") {
-            onError("error - non-PNG paste detected.")
+            setStatus("error - non-PNG paste detected.")
             return;
         }
 
-        clearFound();
-
-        let total = 0;
-        let hasPlayerItems = false;
-
-        const onItemCountReady = (id, count) => {
-            if (count > 0) {
-                if (items[id].value > 0) {
-                    const delta = count * items[id].value;
-                    total += delta;
-                    addFound(`${items[id].name}: ${count} x ${items[id].value} gp = ${delta} gp`);
-                } else {
-                    addFound(`${items[id].name}: ${count} x (player trade value)`);
-                    hasPlayerItems = true;
-                }
-            }
-        };
-
-        const onCallbackReady = (callback) => {
-            Object.entries(items).forEach(([_, item]) => {
-                setStatus(`processing ${item.name}...`);
-                callback(onItemCountReady, onError, item.id);
-            });
-        };
-
-        const onImageReady = (imgBytes) => {
+        f.bytes().then((imgBytes) => {
             setImageSource(window.URL.createObjectURL(new Blob([imgBytes], { type: "image/png" })));
+            clearFound();
             setStatus(`processing...`);
 
-            setTimeout(() => {
-                const start = performance.now();
-                tlootWASM.processImage(onCallbackReady, onError, imgBytes);
-                setStatus(`processing took ${((performance.now() - start) / 1000).toPrecision(2)}s.`);
+            const start = performance.now();
+            const imageProcessorRet = tlootWASM.getImageProcessor(imgBytes);
+            if (imageProcessorRet.error) {
+                setStatus(`getImageProcessor error: ${imageProcessorRet.error}`);
+                return
+            }
+            const process = imageProcessorRet.result;
 
-                if (hasPlayerItems) {
-                    addFound(`Total: ${total} gp(plus player trade items).`);
-                } else {
-                    addFound(`Total: ${total} gp.`);
+            let total = 0;
+            let hasPlayerItems = false;
+
+            Object.entries(items).forEach(([_, item]) => {
+                setStatus(`processing ${item.name}...`);
+                const processRet = process(item.id);
+                if (processRet.error) {
+                    setStatus(`process error: ${processRet.error}`);
+                    return
                 }
-            }, 50);
-        }
 
-        f.bytes().then(onImageReady);
+                const r = processRet.result;
+                if (r.count > 0) {
+                    if (items[r.id].value > 0) {
+                        const delta = r.count * items[r.id].value;
+                        total += delta;
+                        addFound(`${items[r.id].name}: ${r.count} x ${items[r.id].value} gp = ${delta} gp`);
+                    } else {
+                        addFound(`${items[r.id].name}: ${r.count} x (player trade value)`);
+                        hasPlayerItems = true;
+                    }
+                }
+            });
+
+            setStatus(`processing took ${((performance.now() - start) / 1000).toPrecision(2)}s.`);
+
+            if (hasPlayerItems) {
+                addFound(`Total: ${total} gp(plus player trade items).`);
+            } else {
+                addFound(`Total: ${total} gp.`);
+            }
+        });
     });
 };
 

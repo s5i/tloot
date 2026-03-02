@@ -13,58 +13,83 @@ import (
 	_ "image/png"
 )
 
+const (
+	resultKey = "result"
+	errorKey  = "error"
+)
+
 func main() {
 	items := process.LoadItems()
 	sprites := process.LoadSprites()
 
 	namespace := js.Global().Get("tlootWASM")
-	namespace.Set("itemsMap", js.FuncOf(func(this js.Value, args []js.Value) any {
-		ret := map[string]any{}
+	namespace.Set("getItems", js.FuncOf(func(this js.Value, args []js.Value) (retVal any) {
+		ret := map[string]any{
+			resultKey: nil,
+			errorKey:  nil,
+		}
+		defer func() {
+			retVal = ret
+		}()
+
+		results := map[string]any{}
 		for _, item := range items {
-			ret[fmt.Sprintf("%d", item.ID)] = map[string]any{
+			results[fmt.Sprintf("%d", item.ID)] = map[string]any{
 				"id":       item.ID,
 				"name":     item.Name,
 				"value":    item.Value,
 				"category": item.Category,
 			}
 		}
-		return ret
+
+		ret[resultKey] = results
+		return
 	}))
 
-	namespace.Set("processImage", js.FuncOf(func(this js.Value, args []js.Value) any {
-		onCallbackReady := args[0]
-		errCallback := args[1]
-		imgData := args[2]
+	namespace.Set("getImageProcessor", js.FuncOf(func(this js.Value, args []js.Value) (retVal any) {
+		ret := map[string]any{
+			resultKey: nil,
+			errorKey:  nil,
+		}
+		defer func() {
+			retVal = ret
+		}()
 
+		imgData := args[0]
 		imgBytes := make([]byte, imgData.Length())
 		js.CopyBytesToGo(imgBytes, imgData)
 
 		img, _, err := image.Decode(bytes.NewReader(imgBytes))
 		if err != nil {
-			errCallback.Invoke(err.Error())
-			return nil
+			ret[errorKey] = err.Error()
+			return
 		}
 
 		proc := process.NewCallbackProcessor(img, items, sprites)
 
-		onCallbackReady.Invoke(
-			js.FuncOf(
-				func(this js.Value, args []js.Value) any {
-					onItemCountReady := args[0]
-					errCallback := args[1]
-					itemID := args[2]
+		ret[resultKey] = js.FuncOf(func(this js.Value, args []js.Value) (retVal any) {
+			ret := map[string]any{
+				resultKey: nil,
+				errorKey:  nil,
+			}
+			defer func() {
+				retVal = ret
+			}()
 
-					res, err := proc.Process(itemID.Int())
-					if err != nil {
-						errCallback.Invoke(err.Error())
-						return nil
-					}
+			itemID := args[0]
 
-					onItemCountReady.Invoke(res.Item.ID, res.Count)
-					return nil
-				},
-			),
-		)
+			res, err := proc.Process(itemID.Int())
+			if err != nil {
+				ret[errorKey] = err.Error()
+				return
+			}
+
+			ret[resultKey] = map[string]any{
+				"id":    res.Item.ID,
+				"count": res.Count,
+			}
+			return
+		})
 
 		return nil
 	}))
