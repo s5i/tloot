@@ -1,89 +1,148 @@
-tlootWASM = {};
-tlootWASM.onReady = () => {
-    const setStatus = (s) => {
+tlootWASM = {
+    setStatus: (s) => {
         let status = `Status: ${s}`;
         console.log(status);
         document.getElementById('status').textContent = status;
-    };
-    const clearFound = () => {
+    },
+    setError: (s) => {
+        let status = `Error: ${s}`;
+        console.log(status);
+        document.getElementById('status').textContent = status;
+    },
+    clearFound: () => {
         document.getElementById('found').innerHTML = "";
-    };
-    const addFound = (text) => {
+    },
+    addFound: (text) => {
         const found = document.getElementById('found');
         const line = document.createElement('div');
         line.innerText = text;
         found.appendChild(line);
-    };
-    const setImageSource = (src) => {
+    },
+    setImageSource: (src) => {
         const img = document.getElementById('image');
         img.src = src;
-    };
+    },
+    getItemName: (id) => {
+        return tlootWASM.items[id].name;
+    },
+    getItemValue: (id) => {
+        return tlootWASM.items[id].value;
+    },
+    getItemCategory: (id) => {
+        return tlootWASM.items[id].category;
+    },
+    items: {},
+};
 
+tlootWASM.onReady = () => {
     const itemsRet = tlootWASM.getItems();
     if (itemsRet.error) {
-        setStatus(`getItems error: ${itemsRet.error}`);
+        tlootWASM.setError(`getItems: ${itemsRet.error}`);
         return
     }
-    const items = itemsRet.result;
+    tlootWASM.items = itemsRet.result;
+    console.log(tlootWASM.items);
 
     window.addEventListener("paste", (event) => {
         event.preventDefault();
 
         if (event.clipboardData.files.length == 0) {
-            setStatus("error - non-screenshot paste detected.")
+            tlootWASM.setError("non-screenshot paste detected.")
             return;
         }
 
         const f = event.clipboardData.files[0];
         if (f.type != "image/png") {
-            setStatus("error - non-PNG paste detected.")
+            tlootWASM.setError("non-PNG paste detected.")
             return;
         }
 
-        f.bytes().then((imgBytes) => {
-            setImageSource(window.URL.createObjectURL(new Blob([imgBytes], { type: "image/png" })));
-            clearFound();
-            setStatus(`processing...`);
+        const getProcessor = (imgBytes) => {
+            return new Promise(function (resolve, reject) {
+                const imageProcessorRet = tlootWASM.getImageProcessor(imgBytes);
+                if (imageProcessorRet.error) {
+                    reject(`getImageProcessor: ${imageProcessorRet.error}`);
+                    return
+                }
+                resolve(imageProcessorRet.result);
+            });
+        }
 
-            const start = performance.now();
-            const imageProcessorRet = tlootWASM.getImageProcessor(imgBytes);
-            if (imageProcessorRet.error) {
-                setStatus(`getImageProcessor error: ${imageProcessorRet.error}`);
-                return
-            }
-            const process = imageProcessorRet.result;
+        let processSingleItem = (handler, item) => {
+            return new Promise(function (resolve, reject) {
+                tlootWASM.setStatus(`processing ${item.name}...`);
 
-            let total = 0;
-            let hasPlayerItems = false;
-
-            Object.entries(items).forEach(([_, item]) => {
-                setStatus(`processing ${item.name}...`);
-                const processRet = process(item.id);
+                const processRet = handler(item.id);
                 if (processRet.error) {
-                    setStatus(`process error: ${processRet.error}`);
+                    reject(`processSingleItem: ${processRet.error}`);
                     return
                 }
 
                 const r = processRet.result;
-                if (r.count > 0) {
-                    if (items[r.id].value > 0) {
-                        const delta = r.count * items[r.id].value;
-                        total += delta;
-                        addFound(`${items[r.id].name}: ${r.count} x ${items[r.id].value} gp = ${delta} gp`);
+                const id = r.id;
+                const count = r.count;
+                const name = tlootWASM.getItemName(id);
+                const value = tlootWASM.getItemValue(id);
+
+                if (count > 0) {
+                    if (value > 0) {
+                        tlootWASM.addFound(`${name}: ${count} x ${value} gp = ${count * value} gp`);
                     } else {
-                        addFound(`${items[r.id].name}: ${r.count} x (player trade value)`);
+                        tlootWASM.addFound(`${name}: ${count} x (player trade value)`);
+                    }
+                }
+
+                resolve(r);
+            });
+        };
+
+        let processAllItems = (handler) => {
+            let promises = [];
+            Object.entries(tlootWASM.items).forEach(([_, item]) => {
+                promises.push(processSingleItem(handler, item));
+            });
+
+            return Promise.all(promises);
+        }
+
+        let mergeResults = (results) => {
+            return new Promise(function (resolve, reject) {
+                let total = 0;
+                let hasPlayerItems = false;
+
+                for (r of results) {
+                    const id = r.id;
+                    const count = r.count;
+                    const value = tlootWASM.getItemValue(id);
+
+                    total += count * value;
+
+                    if (count > 0 && value <= 0) {
                         hasPlayerItems = true;
                     }
                 }
+
+                if (hasPlayerItems) {
+                    tlootWASM.addFound(`Total: ${total} gp (plus player value).`);
+                } else {
+                    tlootWASM.addFound(`Total: ${total} gp.`);
+                }
+
+                resolve();
             });
+        };
 
-            setStatus(`processing took ${((performance.now() - start) / 1000).toPrecision(2)}s.`);
+        f.bytes().then((imgBytes) => {
+            tlootWASM.setImageSource(window.URL.createObjectURL(new Blob([imgBytes], { type: "image/png" })));
+            tlootWASM.setStatus(`processing...`);
+            tlootWASM.clearFound();
 
-            if (hasPlayerItems) {
-                addFound(`Total: ${total} gp(plus player trade items).`);
-            } else {
-                addFound(`Total: ${total} gp.`);
-            }
+            const start = performance.now();
+            getProcessor(imgBytes)
+                .then(processAllItems)
+                .then(mergeResults)
+                .then(() => { tlootWASM.setStatus(`processing took ${((performance.now() - start) / 1000).toPrecision(2)}s.`); })
+                .catch(err => { tlootWASM.setError(err); });
         });
     });
 };
