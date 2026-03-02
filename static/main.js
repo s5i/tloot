@@ -79,7 +79,12 @@ tlootWASM = {
                 const iChk = document.createElement('input');
                 iChk.type = 'checkbox';
                 iChk.id = `${id}_enabled`;
-                iChk.checked = items[id].enabled;
+                let enabled = window.localStorage.getItem(iChk.id);
+                if (enabled === null) {
+                    enabled = items[id].enabled;
+                }
+                iChk.checked = !!Number(enabled);
+                iChk.classList.add('stored-checked');
                 lSpan.appendChild(iChk);
 
                 const iTxt = document.createTextNode(items[id].name);
@@ -88,11 +93,20 @@ tlootWASM = {
                 const iVal = document.createElement('input');
                 iVal.type = 'number';
                 iVal.id = `${id}_value`;
-                iVal.value = items[id].value;
-                iVal.classList.add('item-value')
+                let value = window.localStorage.getItem(iVal.id);
+                if (value === null) {
+                    value = Number(items[id].value);
+                }
+                iVal.value = value;
+                iVal.classList.add('item-value');
+                iVal.classList.add('stored-value');
                 rSpan.appendChild(iVal);
             });
         });
+    },
+    resetItemSettings: () => {
+        window.localStorage.clear();
+        tlootWASM.loadItemSettings();
     },
     items: {},
 };
@@ -105,7 +119,17 @@ tlootWASM.onReady = () => {
     }
     tlootWASM.items = itemsRet.result;
 
+    window.addEventListener("change", (event) => {
+        if (event.target.classList.contains('stored-checked')) {
+            window.localStorage.setItem(event.target.id, +event.target.checked);
+        }
+        if (event.target.classList.contains('stored-value')) {
+            window.localStorage.setItem(event.target.id, event.target.value);
+        }
+    })
+
     tlootWASM.loadItemSettings();
+    document.getElementById('resetSettings').addEventListener("click", tlootWASM.resetItemSettings);
 
     window.addEventListener("paste", (event) => {
         event.preventDefault();
