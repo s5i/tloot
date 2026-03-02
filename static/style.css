@@ -1,0 +1,32 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+}
+
+table {
+  width: 100%;
+  border: 1px solid;
+}
+
+th,
+td {
+  padding: 3px;
+  vertical-align: top;
+  width: auto;
+  border: 1px solid;
+  text-align: left;
+}
+
+img.fit {
+  width: 100%;
+  height: auto;
+}
+
+td.no-stretch {
+  width: 1%;
+  white-space: nowrap;
+}
+
+div.bold {
+  font-weight: bold;
+}

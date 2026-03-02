@@ -12,10 +12,13 @@ tlootWASM = {
     clearFound: () => {
         document.getElementById('found').innerHTML = "";
     },
-    addFound: (text) => {
+    addFound: (text, bold = false) => {
         const found = document.getElementById('found');
         const line = document.createElement('div');
         line.innerText = text;
+        if (bold) {
+            line.classList.add('bold');
+        }
         found.appendChild(line);
     },
     setImageSource: (src) => {
@@ -123,9 +126,9 @@ tlootWASM.onReady = () => {
                 }
 
                 if (hasPlayerItems) {
-                    tlootWASM.addFound(`Total: ${total} gp (plus player value).`);
+                    tlootWASM.addFound(`Total: ${total} gp (plus player value).`, true);
                 } else {
-                    tlootWASM.addFound(`Total: ${total} gp.`);
+                    tlootWASM.addFound(`Total: ${total} gp.`, true);
                 }
 
                 resolve();
@@ -134,15 +137,17 @@ tlootWASM.onReady = () => {
 
         f.bytes().then((imgBytes) => {
             tlootWASM.setImageSource(window.URL.createObjectURL(new Blob([imgBytes], { type: "image/png" })));
-            tlootWASM.setStatus(`processing...`);
             tlootWASM.clearFound();
+            tlootWASM.setStatus(`processing...`);
 
-            const start = performance.now();
-            getProcessor(imgBytes)
-                .then(processAllItems)
-                .then(mergeResults)
-                .then(() => { tlootWASM.setStatus(`processing took ${((performance.now() - start) / 1000).toPrecision(2)}s.`); })
-                .catch(err => { tlootWASM.setError(err); });
+            setTimeout(() => {
+                const start = performance.now();
+                getProcessor(imgBytes)
+                    .then(processAllItems)
+                    .then(mergeResults)
+                    .then(() => { tlootWASM.setStatus(`processing took ${((performance.now() - start) / 1000).toPrecision(2)}s.`); })
+                    .catch(err => { tlootWASM.setError(err); });
+            }, 50);
         });
     });
 };

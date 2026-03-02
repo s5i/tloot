@@ -1,31 +1,37 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TLoot</title>
+    <link rel="stylesheet" href="style.css">
     <script src="wasm_exec.js"></script>
     <script src="main.js"></script>
 </head>
 
 <body>
-    <span>
-        <div>Instructions:</div>
-        <div>1. Take a partial screenshot (Win + Shift + S) of the loot; see example below.</div>
-        <div>2. Hit Ctrl + V.</div>
-        <div>3. Wait.</div>
-        <div>4. Bad results? Save the screenshot you pasted, contact Shy Teddy.</div>
-    </span>
-    <hr>
-    <span>
-        <div id="status">Status: waiting for the screenshot...</div>
-    </span>
-    <hr>
-    <span id="found"></span>
-    <hr>
-    <span>
-        <div>
-            <img id="image" src="example.png">
-        </div>
-    </span>
+    <table>
+        <tr>
+            <td colspan="3">
+                <div class="bold">Instructions:</div>
+                <div>1. Take a partial screenshot (Win + Shift + S) of the loot; see example below.</div>
+                <div>2. Hit Ctrl + V.</div>
+                <div>3. Wait.</div>
+                <div>4. Bad results? Save the screenshot you pasted, contact Shy Teddy.</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <div id="status">Status: waiting for the screenshot...</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="no-stretch"><span id="itemSettings">Settings section. Work in progress.</span></td>
+            <td class="no-stretch"><img id="image" src="example.png"></td>
+            <td><span id="found">No findings yet.</span></td>
+        </tr>
+    </table>
 </body>
 
 </html>
