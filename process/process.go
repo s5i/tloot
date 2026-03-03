@@ -29,15 +29,20 @@ func NewCallbackProcessor(img image.Image, items map[int]ItemConfig, sprites Spr
 	}
 }
 
-func (p *CallbackProcessor) Process(item int) (ProcessResult, error) {
+func (cp *CallbackProcessor) Process(item int) (ProcessResult, error) {
 	t := time.Now()
 
-	found, err := p.lookup.FindAll(p.sprites[item], precision)
+	precision := defaultPrecision
+	if p := cp.items[item].DetectPrecision; p != 0 {
+		precision = p
+	}
+
+	found, err := cp.lookup.FindAll(cp.sprites[item], float64(precision)/100.0)
 	if err != nil {
 		return ProcessResult{}, err
 	}
 
-	size := p.sprites[item].Bounds()
+	size := cp.sprites[item].Bounds()
 	dedupe := map[lookup.GPoint]bool{}
 	for _, a := range found {
 		dupe := false
@@ -53,7 +58,7 @@ func (p *CallbackProcessor) Process(item int) (ProcessResult, error) {
 	}
 
 	return ProcessResult{
-		Item:    p.items[item],
+		Item:    cp.items[item],
 		Count:   len(dedupe),
 		Elapsed: time.Since(t),
 	}, nil
@@ -63,4 +68,4 @@ func overlaps(a, b lookup.GPoint, size image.Rectangle) bool {
 	return a.X >= b.X && a.X < b.X+size.Dx() && a.Y >= b.Y && a.Y < b.Y+size.Dy()
 }
 
-var precision = 0.85
+const defaultPrecision = 85

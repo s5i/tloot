@@ -7,10 +7,11 @@ import (
 )
 
 type ItemConfig struct {
-	ID       int    `yaml:"id"`
-	Name     string `yaml:"name"`
-	Value    int    `yaml:"value"`
-	Category string `yaml:"category"`
+	ID              int    `yaml:"id"`
+	Name            string `yaml:"name"`
+	Value           int    `yaml:"value"`
+	Category        string `yaml:"category"`
+	DetectPrecision int    `yaml:"detect_precision"`
 }
 
 type itemConfig struct {
