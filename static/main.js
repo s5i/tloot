@@ -65,6 +65,7 @@ tlootWASM = {
 
             const tDiv = document.createElement('div');
             tDiv.classList.add('bold');
+            tDiv.classList.add('no-select');
             tDiv.innerText = category;
             headerDiv.appendChild(tDiv);
 
@@ -108,7 +109,10 @@ tlootWASM = {
                 })
                 lSpan.appendChild(iChk);
 
-                const iTxt = document.createTextNode(items[id].name);
+                const iTxt = document.createElement('label');
+                iTxt.innerText = items[id].name;
+                iTxt.htmlFor = iChk.id;
+                iTxt.classList.add('no-select');
                 lSpan.appendChild(iTxt);
 
                 const iVal = document.createElement('input');

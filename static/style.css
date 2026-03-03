@@ -60,6 +60,10 @@ span.item-settings {
   padding: 2px;
 }
 
+.no-select {
+  user-select: none;
+}
+
 .item-value {
   width: 60px;
 }
