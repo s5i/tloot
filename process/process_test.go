@@ -48,6 +48,19 @@ func BenchmarkParallel(b *testing.B) {
 	}
 }
 
+func TestAssets(t *testing.T) {
+	for _, item := range items {
+		if _, ok := sprites[item.ID]; !ok {
+			t.Errorf("missing sprite for item %d (%s)", item.ID, item.Name)
+		}
+	}
+	for id := range sprites {
+		if _, ok := items[id]; !ok {
+			t.Errorf("missing config for sprite id = %d", id)
+		}
+	}
+}
+
 func loadImage(imgPath string) image.Image {
 	imageFile, _ := os.Open(imgPath)
 	defer imageFile.Close()

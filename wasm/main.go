@@ -39,7 +39,7 @@ func main() {
 				"name":     item.Name,
 				"value":    item.Value,
 				"category": item.Category,
-				"enabled":  item.Value > 0 && item.Value < 1000,
+				"enabled":  item.Value >= 10 && item.Value <= 1000,
 			}
 		}
 

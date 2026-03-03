@@ -245,6 +245,26 @@ items:
     name: Foil
     value: 80
     category: Swords
+  3727:
+    name: Rapier
+    value: 5
+    category: Swords
+  3294:
+    name: Short Sword
+    value: 10
+    category: Swords
+  3273:
+    name: Sabre
+    value: 12
+    category: Swords
+  3283:
+    name: Carlin Sword
+    value: 118
+    category: Swords
+  3267:
+    name: Dagger
+    value: 2
+    category: Swords
   3302:
     name: Dragon Lance
     value: 9000
