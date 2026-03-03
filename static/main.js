@@ -59,10 +59,28 @@ tlootWASM = {
             cDiv.classList.add('item-category')
             settingsParent.appendChild(cDiv);
 
+            const headerDiv = document.createElement('div');
+            headerDiv.classList.add('category-header');
+            cDiv.appendChild(headerDiv);
+
             const tDiv = document.createElement('div');
             tDiv.classList.add('bold');
             tDiv.innerText = category;
-            cDiv.appendChild(tDiv);
+            headerDiv.appendChild(tDiv);
+
+            const btnDiv = document.createElement('div');
+            btnDiv.classList.add('category-buttons');
+            headerDiv.appendChild(btnDiv);
+
+            const enableBtn = document.createElement('button');
+            enableBtn.textContent = 'Enable';
+            enableBtn.addEventListener('click', () => tlootWASM.setCategoryEnabled(ids, true));
+            btnDiv.appendChild(enableBtn);
+
+            const disableBtn = document.createElement('button');
+            disableBtn.textContent = 'Disable';
+            disableBtn.addEventListener('click', () => tlootWASM.setCategoryEnabled(ids, false));
+            btnDiv.appendChild(disableBtn);
 
             ids.forEach((id) => {
                 const iDiv = document.createElement('div');
@@ -84,7 +102,10 @@ tlootWASM = {
                     enabled = items[id].enabled;
                 }
                 iChk.checked = !!Number(enabled);
-                iChk.classList.add('stored-checked');
+                iChk.classList.add('stored-enabled');
+                iChk.addEventListener("change", (event) => {
+                    window.localStorage.setItem(event.target.id, +event.target.checked);
+                })
                 lSpan.appendChild(iChk);
 
                 const iTxt = document.createTextNode(items[id].name);
@@ -99,14 +120,40 @@ tlootWASM = {
                 }
                 iVal.value = value;
                 iVal.classList.add('item-value');
-                iVal.classList.add('stored-value');
+                iVal.classList.add('stored-price');
+                iVal.addEventListener("change", (event) => {
+                    window.localStorage.setItem(event.target.id, event.target.value);
+                })
                 rSpan.appendChild(iVal);
             });
         });
     },
-    resetItemSettings: () => {
-        window.localStorage.clear();
-        tlootWASM.loadItemSettings();
+    setAllEnabled: (enabled) => {
+        document.querySelectorAll('.stored-enabled').forEach((chk) => {
+            chk.checked = enabled;
+            window.localStorage.setItem(chk.id, +chk.checked);
+        });
+    },
+    setCategoryEnabled: (ids, enabled) => {
+        ids.forEach((id) => {
+            const chk = document.getElementById(`${id}_enabled`);
+            chk.checked = enabled;
+            window.localStorage.setItem(chk.id, +chk.checked);
+        });
+    },
+    resetPrices: () => {
+        document.querySelectorAll('.stored-price').forEach((input) => {
+            const id = input.id.replace('_value', '');
+            input.value = Number(tlootWASM.items[id].value);
+            window.localStorage.removeItem(input.id);
+        });
+    },
+    resetEnabled: () => {
+        document.querySelectorAll('.stored-enabled').forEach((input) => {
+            const id = input.id.replace('_enabled', '');
+            input.checked = Number(tlootWASM.items[id].enabled);
+            window.localStorage.removeItem(input.id);
+        });
     },
     items: {},
 };
@@ -119,17 +166,11 @@ tlootWASM.onReady = () => {
     }
     tlootWASM.items = itemsRet.result;
 
-    window.addEventListener("change", (event) => {
-        if (event.target.classList.contains('stored-checked')) {
-            window.localStorage.setItem(event.target.id, +event.target.checked);
-        }
-        if (event.target.classList.contains('stored-value')) {
-            window.localStorage.setItem(event.target.id, event.target.value);
-        }
-    })
-
     tlootWASM.loadItemSettings();
-    document.getElementById('resetSettings').addEventListener("click", tlootWASM.resetItemSettings);
+    document.getElementById('resetEnabled').addEventListener('click', tlootWASM.resetEnabled);
+    document.getElementById('enableAll').addEventListener('click', () => tlootWASM.setAllEnabled(true));
+    document.getElementById('disableAll').addEventListener('click', () => tlootWASM.setAllEnabled(false));
+    document.getElementById('resetPrices').addEventListener('click', tlootWASM.resetPrices);
 
     window.addEventListener("paste", (event) => {
         event.preventDefault();

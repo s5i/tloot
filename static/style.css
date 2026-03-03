@@ -63,3 +63,25 @@ span.item-settings {
 .item-value {
   width: 60px;
 }
+
+.global-buttons {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category-buttons {
+  display: flex;
+  gap: 3px;
+}
+
+.category-buttons button {
+  font-size: 0.8em;
+  padding: 1px 5px;
+}
