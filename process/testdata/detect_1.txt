@@ -1,0 +1,10 @@
+Total item count: 60
+
+Battle Hammer: 12
+Brass Armor: 8
+Brass Legs: 14
+Dark Shield: 4
+Iron Helmet: 10
+Mace: 2
+Sword: 1
+Two-handed Sword: 9

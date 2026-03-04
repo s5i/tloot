@@ -4,6 +4,7 @@ go 1.25.3
 
 require (
 	github.com/deluan/lookup v0.0.8
+	github.com/google/go-cmp v0.5.8
 	github.com/s5i/goutil/version v0.0.0
 	golang.org/x/sync v0.19.0
 	gopkg.in/yaml.v2 v2.4.0

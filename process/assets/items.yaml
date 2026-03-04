@@ -1,4 +1,5 @@
 items:
+
   3392:
     name: Royal Helmet
     value: 25000
@@ -10,6 +11,9 @@ items:
   3369:
     name: Warrior Helmet
     value: 5000
+    category: Helmets
+  3356:
+    name: Devil Helmet
     category: Helmets
   3385:
     name: Crown Helmet
@@ -27,28 +31,44 @@ items:
     name: Strange Helmet
     value: 500
     category: Helmets
+  3353:
+    name: Iron Helmet
+    value: 150
+    category: Helmets
+  3375:
+    name: Soldier Helmet
+    value: 16
+    category: Helmets
   3367:
     name: Viking Helmet
     value: 66
+    category: Helmets
+  3374:
+    name: Legion Helmet
+    value: 8
     category: Helmets
   3354:
     name: Brass Helmet
     value: 30
     category: Helmets
+  3352:
+    name: Chain Helmet
+    value: 17
+    category: Helmet
   3574:
     name: Mystic Turban
     value: 150
     category: Helmets
-  3353:
-    name: Iron Helmet
-    value: 150
-    category: Helmets
-  3390:
-    name: Horned Helmet
-    category: Helmets
-  3356:
-    name: Devil Helmet
-    category: Helmets
+  
+  3366:
+    name: Magic Plate Armor
+    category: Armors
+  3386:
+    name: Dragon Scale Mail
+    category: Armors
+  3360:
+    name: Golden Armor
+    category: Armors
   3381:
     name: Crown Armor
     value: 12000
@@ -60,10 +80,6 @@ items:
   3567:
     name: Blue Robe
     value: 8000
-    category: Armors
-  3380:
-    name: Noble Armor
-    value: 900
     category: Armors
   3383:
     name: Dark Armor
@@ -85,18 +101,18 @@ items:
     name: Chain Armor
     value: 70
     category: Armors
-  3366:
-    name: Magic Plate Armor
+  3378:
+    name: Studded Armor
+    value: 18
     category: Armors
-  3386:
-    name: Dragon Scale Mail
-    category: Armors
-  3360:
-    name: Golden Armor
+  3361:
+    name: Leather Armor
+    value: 5
     category: Armors
   3566:
     name: Red Robe
     category: Armors
+
   3364:
     name: Golden Legs
     category: Legs
@@ -116,6 +132,11 @@ items:
     name: Brass Legs
     value: 49
     category: Legs
+  3358:
+    name: Chain Legs
+    value: 25
+    category: Legs
+
   3554:
     name: Steel Boots
     category: Boots
@@ -123,11 +144,10 @@ items:
     name: Boots of Haste
     value: 28000
     category: Boots
+
+
   3414:
     name: Mastermind Shield
-    category: Shields
-  3442:
-    name: Tempest Shield
     category: Shields
   3420:
     name: Demon Shield
@@ -167,12 +187,12 @@ items:
     name: Dwarven Shield
     value: 100
     category: Shields
+  3440:
+    name: Scarab Shield
+    category: Shields
   3421:
     name: Dark Shield
     value: 200
-    category: Shields
-  3440:
-    name: Scarab Shield
     category: Shields
   3413:
     name: Battle Shield
@@ -186,6 +206,10 @@ items:
     name: Steel Shield
     value: 80
     category: Shields
+  3430:
+    name: Copper Shield
+    value: 10
+    category: Shields
   3429:
     name: Black Shield
     value: 800 # TODO verify
@@ -194,6 +218,15 @@ items:
     name: Plate Shield
     value: 45
     category: Shields
+  3411:
+    name: Brass Shield
+    value: 25
+    category: Shields
+  3412:
+    name: Wooden Shield
+    value: 5
+    category: Shields
+
   3284:
     name: Ice Rapier
     value: 1000
@@ -237,6 +270,10 @@ items:
     name: Longsword
     value: 51
     category: Swords
+  3283:
+    name: Carlin Sword
+    value: 118
+    category: Swords
   3264:
     name: Sword
     value: 25
@@ -257,14 +294,11 @@ items:
     name: Sabre
     value: 12
     category: Swords
-  3283:
-    name: Carlin Sword
-    value: 118
-    category: Swords
   3267:
     name: Dagger
     value: 2
     category: Swords
+
   3302:
     name: Dragon Lance
     value: 9000
@@ -276,6 +310,9 @@ items:
   3320:
     name: Fire Axe
     value: 7500
+    category: Axes
+  3328:
+    name: Daramanian Waraxe
     category: Axes
   3275:
     name: Double Axe
@@ -301,18 +338,14 @@ items:
     name: Hatchet
     value: 25
     category: Axes
-  3311:
-    name: Clerical Mace
-    value: 170
-    category: Clubs
-  3208:
-    name: Battle Hammer
-    value: 120
-    category: Clubs
-  3286:
-    name: Mace
-    value: 30
-    category: Clubs
+  3306:
+    name: Golden Sickle
+    category: Axes
+  3274:
+    name: Axe
+    value: 7
+    category: Axes
+
   3325:
     name: Golden Mace
     category: Clubs
@@ -334,6 +367,27 @@ items:
     name: Dragon Hammer
     value: 1500
     category: Clubs
+  3311:
+    name: Clerical Mace
+    value: 170
+    category: Clubs
+  3282:
+    name: Morning Star
+    value: 100
+    category: Clubs
+  3208:
+    name: Battle Hammer
+    value: 120
+    category: Clubs
+  3286:
+    name: Mace
+    value: 30
+    category: Clubs
+  3304:
+    name: Crowbar
+    value: 50
+    category: Clubs
+
   3350:
     name: Bow
     value: 130
@@ -342,3 +396,90 @@ items:
     name: Crossbow
     value: 160
     category: Distance
+
+  3245:
+    name: Ring of the Skies
+    category: Rings
+  3098:
+    name: Ring of Healing
+    category: Rings
+  3052:
+    name: Life Ring
+    category: Rings
+  3051:
+    name: Energy Ring
+    category: Rings
+  3053:
+    name: Time Ring
+    category: Rings
+  3091:
+    name: Sword Ring
+    category: Rings
+  3093:
+    name: Club Ring
+    category: Rings
+  3092:
+    name: Axe Ring
+    category: Rings
+  3049:
+    name: Stealth Ring
+    category: Rings
+  3048:
+    name: Might Ring
+    category: Rings
+  3063:
+    name: Golden Ring
+    category: Rings
+  3097:
+    name: Dwarven Ring
+    category: Rings
+
+  3025:
+    name: Ancient Amulet
+    category: Amulets
+  3018:
+    name: Scarab Amulet
+    category: Amulets
+  3081:
+    name: Stone Skin Amulet
+    category: Amulets
+  3085:
+    name: Dragon Necklace
+    category: Amulets
+  3055:
+    name: Platinum Amulet
+    category: Amulets
+  3084:
+    name: Protection Amulet
+    category: Amulets
+  3056:
+    name: Bronze Amulet
+    category: Amulets
+  3054:
+    name: Silver Amulet
+    category: Amulets
+  3083:
+    name: Garlic Necklace
+    category: Amulets
+  3045:
+    name: Strange Talisman
+    category: Amulets
+  3082:
+    name: Elven Amulet
+    category: Amulets
+  3206:
+    name: Strange Symbol
+    category: Amulets
+  
+  3553:
+    name: Bunnyslippers
+    category: Rares
+  3390:
+    name: Horned Helmet
+    category: Rares
+  3442:
+    name: Tempest Shield
+    category: Rares
+  3435:
+    name: Castle Shield
+    category: Rares

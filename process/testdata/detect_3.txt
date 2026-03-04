@@ -1,0 +1,5 @@
+Total item count: 39
+
+Plate Armor: 11
+Plate Shield: 19
+Scimitar: 9
