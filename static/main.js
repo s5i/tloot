@@ -242,7 +242,8 @@ tlootWASM.onReady = () => {
 
         let mergeResults = (results) => {
             return new Promise(function (resolve, reject) {
-                let total = 0;
+                let totalCount = 0;
+                let totalValue = 0;
                 let hasPlayerItems = false;
 
                 for (r of results) {
@@ -250,7 +251,8 @@ tlootWASM.onReady = () => {
                     const count = r.count;
                     const value = tlootWASM.getItemValue(id);
 
-                    total += count * value;
+                    totalCount += count;
+                    totalValue += count * value;
 
                     if (count > 0 && value <= 0) {
                         hasPlayerItems = true;
@@ -258,9 +260,9 @@ tlootWASM.onReady = () => {
                 }
 
                 if (hasPlayerItems) {
-                    tlootWASM.addFound(`Total: ${total} gp (plus player value).`, true);
+                    tlootWASM.addFound(`Total: ${totalCount} items worth ${totalValue} gp (plus player value).`, true);
                 } else {
-                    tlootWASM.addFound(`Total: ${total} gp.`, true);
+                    tlootWASM.addFound(`Total: ${totalCount} items worth ${totalValue} gp.`, true);
                 }
 
                 resolve();
