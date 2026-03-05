@@ -51,6 +51,7 @@ items:
     name: Brass Helmet
     value: 30
     category: Helmets
+    detect_precision: 80
   3352:
     name: Chain Helmet
     value: 17

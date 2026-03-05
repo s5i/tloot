@@ -1,0 +1,12 @@
+Total item count: 65
+
+Battle Hammer: 1
+Bow: 1
+Brass Helmet: 27
+Brass Legs: 8
+Dark Armor: 9
+Iron Helmet: 1
+Morning Star: 3
+Scale Armor: 7
+Strange Helmet: 2
+Viking Helmet: 6
