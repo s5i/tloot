@@ -212,7 +212,7 @@ items:
     category: Shields
   3429:
     name: Black Shield
-    value: 800 # TODO verify
+    value: 800
     category: Shields
   3410:
     name: Plate Shield
@@ -402,36 +402,50 @@ items:
     category: Rings
   3098:
     name: Ring of Healing
+    value: 100
     category: Rings
   3052:
     name: Life Ring
+    value: 50
     category: Rings
   3051:
     name: Energy Ring
+    value: 100
     category: Rings
   3053:
     name: Time Ring
+    value: 100
     category: Rings
   3091:
     name: Sword Ring
+    value: 100
     category: Rings
   3093:
     name: Club Ring
+    value: 100
     category: Rings
   3092:
     name: Axe Ring
+    value: 100
     category: Rings
   3049:
     name: Stealth Ring
+    value: 200
     category: Rings
   3048:
     name: Might Ring
+    value: 250
     category: Rings
   3063:
     name: Golden Ring
     category: Rings
   3097:
     name: Dwarven Ring
+    value: 100
+    category: Rings
+  3050:
+    name: Power Ring
+    value: 50
     category: Rings
 
   3025:
@@ -442,30 +456,38 @@ items:
     category: Amulets
   3081:
     name: Stone Skin Amulet
+    value: 500
     category: Amulets
   3085:
     name: Dragon Necklace
+    value: 100
     category: Amulets
   3055:
     name: Platinum Amulet
     category: Amulets
   3084:
     name: Protection Amulet
+    value: 100
     category: Amulets
   3056:
     name: Bronze Amulet
+    value: 50
     category: Amulets
   3054:
     name: Silver Amulet
+    value: 50
     category: Amulets
   3083:
     name: Garlic Necklace
+    value: 50
     category: Amulets
   3045:
     name: Strange Talisman
+    value: 30
     category: Amulets
   3082:
     name: Elven Amulet
+    value: 100
     category: Amulets
   3206:
     name: Strange Symbol
