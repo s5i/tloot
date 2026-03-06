@@ -2,12 +2,15 @@
 
 BINARY="/app/tloot.app"
 EXAMPLE_CONFIG="/app/example_config.yaml"
+EXAMPLE_MOTD="/app/example_motd.html"
 CONFIG="/appdata/config.yaml"
+MOTD="/appdata/dynamic_files/motd.hml"
 SENTINEL="/appdata/SENTINEL.readme"
 
 if [ ! -f "${CONFIG}" ]; then
     echo "Remove this file after making necessary changes to ${CONFIG}" > "${SENTINEL}"
     cp "${EXAMPLE_CONFIG}" "${CONFIG}"
+    cp "${EXAMPLE_MOTD}" "${MOTD}"
 fi
 
 if [ -f "${SENTINEL}" ]; then

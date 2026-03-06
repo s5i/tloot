@@ -1,2 +1,3 @@
 provided_endpoints:
   ui: ":8080"
+dynamic_files_path: /appdata/dynamic_files/

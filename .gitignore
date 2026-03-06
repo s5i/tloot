@@ -5,6 +5,7 @@
 !Dockerfile
 !*.sh
 !*.yaml
+!*.html
 !*.go
 !*/
 !static/**

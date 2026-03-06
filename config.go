@@ -11,6 +11,7 @@ type Config struct {
 	ProvidedEndpoints struct {
 		UI string `yaml:"ui"`
 	} `yaml:"provided_endpoints"`
+	DynamicFilesPath string `yaml:"dynamic_files_path"`
 }
 
 func ReadConfig(path string) (*Config, error) {

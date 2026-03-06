@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/s5i/goutil/version"
@@ -38,6 +39,7 @@ func main() {
 	listen := cfg.ProvidedEndpoints.UI
 	mux := http.NewServeMux()
 	mux.Handle("/", http.HandlerFunc(staticHandler))
+	mux.Handle("/d/", noCache(http.StripPrefix("/d", http.FileServer(http.Dir(cfg.DynamicFilesPath)))))
 
 	srv := http.Server{
 		Addr:    listen,
@@ -58,13 +60,20 @@ func main() {
 	}
 }
 
+func noCache(h http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache, private, max-age=0")
+		h.ServeHTTP(w, r)
+	}
+}
+
 func staticHandler(w http.ResponseWriter, r *http.Request) {
 	f := r.URL.Path
 	if f == "/" {
 		f = "/index.html"
 	}
 
-	content, err := staticData.ReadFile("static" + f)
+	content, err := staticData.ReadFile(filepath.Join("static", f))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -81,11 +90,8 @@ func staticHandler(w http.ResponseWriter, r *http.Request) {
 var staticData embed.FS
 
 func contentType(fName string) string {
-	split := strings.Split(fName, ".")
-	ext := split[len(split)-1]
-
-	switch ext {
-	case "", "html":
+	switch strings.TrimPrefix(filepath.Ext(fName), ".") {
+	case "html":
 		return "text/html"
 	case "js":
 		return "application/javascript"

@@ -1,3 +1,16 @@
+new Promise((resolve, reject) => {
+    let request = new XMLHttpRequest();
+    request.addEventListener("readystatechange", () => {
+        if (request.readyState === 4 && request.status === 200) {
+            resolve(request.responseText);
+        }
+    });
+    request.open("GET", "/d/motd.html");
+    request.send();
+}).then((data) => {
+    document.getElementById('motd').innerHTML = data;
+}).catch(() => { });
+
 tlootWASM = {
     setStatus: (s) => {
         let status = `Status: ${s}`;
