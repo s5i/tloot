@@ -14,7 +14,7 @@ items:
     category: Helmets
   3356:
     name: Devil Helmet
-    value: -1000 # Player
+    value: -1000
     category: Helmets
   3385:
     name: Crown Helmet
@@ -64,15 +64,15 @@ items:
   
   3366:
     name: Magic Plate Armor
-    value: -500000 # Player
+    value: -500000
     category: Armors
   3386:
     name: Dragon Scale Mail
-    value: -35000 # Player
+    value: -35000
     category: Armors
   3360:
     name: Golden Armor
-    value: -20000 # Player
+    value: -20000
     category: Armors
   3381:
     name: Crown Armor
@@ -116,12 +116,12 @@ items:
     category: Armors
   3566:
     name: Red Robe
-    value: -20000 # Player
+    value: -20000
     category: Armors
 
   3364:
     name: Golden Legs
-    value: -100000 # Player
+    value: -100000
     category: Legs
   3382:
     name: Crown Legs
@@ -146,7 +146,7 @@ items:
 
   3554:
     name: Steel Boots
-    value: -15000 # Player
+    value: -15000
     category: Boots
   3079:
     name: Boots of Haste
@@ -155,11 +155,11 @@ items:
 
   3414:
     name: Mastermind Shield
-    value: -50000 # Player
+    value: -50000
     category: Shields
   3420:
     name: Demon Shield
-    value: -25000 # Player
+    value: -25000
     category: Shields
   3434:
     name: Vampire Shield
@@ -199,7 +199,7 @@ items:
     category: Shields
   3440:
     name: Scarab Shield
-    value: -500 # Player
+    value: -500
     category: Shields
   3421:
     name: Dark Shield
@@ -248,7 +248,7 @@ items:
     category: Swords
   3295:
     name: Bright Sword
-    value: -70000 # Player
+    value: -70000
     category: Swords
   3280:
     name: Fire Sword
@@ -317,7 +317,7 @@ items:
     category: Axes
   3315:
     name: Guardian Halberd
-    value: 16000 # TODO verify
+    value: 16000
     category: Axes
   3320:
     name: Fire Axe
@@ -325,7 +325,7 @@ items:
     category: Axes
   3328:
     name: Daramanian Waraxe
-    value: -500 # Player
+    value: -500
     category: Axes
   3275:
     name: Double Axe
@@ -353,7 +353,7 @@ items:
     category: Axes
   3306:
     name: Golden Sickle
-    value: -500 # Player
+    value: -500
     category: Axes
   3274:
     name: Axe
@@ -362,7 +362,7 @@ items:
 
   3332:
     name: Hammer of Wrath
-    value: -60000 # Player
+    value: -60000
     category: Clubs
   3279:
     name: War Hammer
@@ -408,51 +408,51 @@ items:
 
   3245:
     name: Ring of the Skies
-    value: -10000 # Player
+    value: -10000
     category: Rings
   3098:
     name: Ring of Healing
-    value: -1400 # Player
+    value: -1400
     category: Rings
   3052:
     name: Life Ring
-    value: -800 # Player
+    value: -800
     category: Rings
   3051:
     name: Energy Ring
-    value: -350 # Player
+    value: -350
     category: Rings
   3053:
     name: Time Ring
-    value: -3000 # Player
+    value: -3000
     category: Rings
   3091:
     name: Sword Ring
-    value: -300 # Player
+    value: -300
     category: Rings
   3093:
     name: Club Ring
-    value: -300 # Player
+    value: -300
     category: Rings
   3092:
     name: Axe Ring
-    value: -300 # Player
+    value: -300
     category: Rings
   3049:
     name: Stealth Ring
-    value: -5000 # Player
+    value: -5000
     category: Rings
   3048:
     name: Might Ring
-    value: -5000 # Player
+    value: -5000
     category: Rings
   3063:
     name: Golden Ring
-    value: -500 # Player
+    value: -500
     category: Rings
   3097:
     name: Dwarven Ring
-    value: -500 # Player
+    value: -500
     category: Rings
   3050:
     name: Power Ring
@@ -461,27 +461,27 @@ items:
 
   3025:
     name: Ancient Amulet
-    value: -500 # Player
+    value: -500
     category: Amulets
   3018:
     name: Scarab Amulet
-    value: -10000 # Player
+    value: -10000
     category: Amulets
   3081:
     name: Stone Skin Amulet
-    value: -8000 # Player
+    value: -8000
     category: Amulets
   3085:
     name: Dragon Necklace
-    value: -300 # Player
+    value: -300
     category: Amulets
   3055:
     name: Platinum Amulet
-    value: -5000 # Player
+    value: -5000
     category: Amulets
   3084:
     name: Protection Amulet
-    value: -200 # Player
+    value: -200
     category: Amulets
   3056:
     name: Bronze Amulet
@@ -501,9 +501,9 @@ items:
     category: Amulets
   3082:
     name: Elven Amulet
-    value: -500 # Player
+    value: -500
     category: Amulets
   3206:
     name: Strange Symbol
-    value: -500 # Player
+    value: -500
     category: Amulets
