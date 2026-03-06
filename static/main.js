@@ -214,7 +214,6 @@ tlootWASM.onReady = () => {
     tlootWASM.items = itemsRet.result;
 
     tlootWASM.loadItemSettings();
-    document.getElementById('resetEnabled').addEventListener('click', tlootWASM.resetEnabled);
     document.getElementById('enableAll').addEventListener('click', () => tlootWASM.setAllEnabled(true));
     document.getElementById('disableAll').addEventListener('click', () => tlootWASM.setAllEnabled(false));
     document.getElementById('resetPrices').addEventListener('click', tlootWASM.resetPrices);
