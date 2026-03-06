@@ -34,12 +34,19 @@ func main() {
 
 		results := map[string]any{}
 		for _, item := range items {
+			value := item.Value
+			market := false
+			if value < 0 {
+				value = -value
+				market = true
+			}
 			results[fmt.Sprintf("%d", item.ID)] = map[string]any{
 				"id":       item.ID,
 				"name":     item.Name,
-				"value":    item.Value,
+				"value":    value,
+				"market":   market,
 				"category": item.Category,
-				"enabled":  item.Value >= 10 && item.Value <= 1000,
+				"enabled":  true,
 			}
 		}
 

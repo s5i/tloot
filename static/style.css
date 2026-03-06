@@ -68,6 +68,14 @@ span.item-settings {
   width: 60px;
 }
 
+.market-value {
+  background-color: yellow;
+}
+
+.modified-value {
+  font-weight: bold;
+}
+
 .global-buttons {
   display: flex;
   gap: 5px;

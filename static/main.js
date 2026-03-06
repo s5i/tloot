@@ -122,11 +122,22 @@ tlootWASM = {
                 if (value === null) {
                     value = Number(items[id].value);
                 }
+                if (items[id].market) {
+                    iVal.classList.add('market-value');
+                }
+                if (value != Number(items[id].value)) {
+                    iVal.classList.add('modified-value');
+                }
                 iVal.value = value;
                 iVal.classList.add('item-value');
                 iVal.classList.add('stored-price');
                 iVal.addEventListener("change", (event) => {
                     window.localStorage.setItem(event.target.id, event.target.value);
+                    if (event.target.value != Number(items[id].value)) {
+                        iVal.classList.add('modified-value');
+                    } else {
+                        iVal.classList.remove('modified-value');
+                    }
                 })
                 rSpan.appendChild(iVal);
             });
@@ -218,11 +229,7 @@ tlootWASM.onReady = () => {
                 const value = tlootWASM.getItemValue(id);
 
                 if (count > 0) {
-                    if (value > 0) {
-                        tlootWASM.addFound(`${name}: ${count} x ${value} gp = ${count * value} gp`);
-                    } else {
-                        tlootWASM.addFound(`${name}: ${count} x (player trade value)`);
-                    }
+                    tlootWASM.addFound(`${name}: ${count} x ${value} gp = ${count * value} gp`);
                 }
 
                 resolve(r);
@@ -244,7 +251,6 @@ tlootWASM.onReady = () => {
             return new Promise(function (resolve, reject) {
                 let totalCount = 0;
                 let totalValue = 0;
-                let hasPlayerItems = false;
 
                 for (r of results) {
                     const id = r.id;
@@ -259,11 +265,7 @@ tlootWASM.onReady = () => {
                     }
                 }
 
-                if (hasPlayerItems) {
-                    tlootWASM.addFound(`Total: ${totalCount} items worth ${totalValue} gp (plus player value).`, true);
-                } else {
-                    tlootWASM.addFound(`Total: ${totalCount} items worth ${totalValue} gp.`, true);
-                }
+                tlootWASM.addFound(`Total: ${totalCount} items worth ${totalValue} gp.`, true);
 
                 resolve();
             });

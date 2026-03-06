@@ -15,20 +15,27 @@
         <tr>
             <td colspan="3">
                 <div class="bold">Instructions:</div>
-                <div>1. Select items to be detected (warning: each item adds processing time).</div>
-                <div>2. Adjust prices if necessary. 0 means player price.</div>
-                <div>3. Take a partial screenshot (Win + Shift + S) of the loot; see example below.</div>
-                <div>4. Hit Ctrl + V.</div>
+                <ol>
+                    <li>Select items to be detected.
+                        <ul>
+                            <li>Each item adds processing time.</li>
+                        </ul>
+                    </li>
+                    <li>Adjust prices if necessary.
+                        <ul>
+                            <li>Yellow background &rarr; market price (NPC price is missing or terrible).</li>
+                            <li>Bold font &rarr; price was modified.</li>
+                        </ul>
+                    </li>
+                    <li>Take a partial screenshot (Win + Shift + S) of the loot.
+                        <ul>
+                            <li>See example below.</li>
+                        </ul>
+                    </li>
+                    <li>Hit Ctrl + V.</li>
+                    <li>Bad results? Save the screenshot you pasted, contact Shy Teddy.</li>
+                </ol>
             </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <div id="status">Status: waiting for the screenshot...</div>
-            </td>
-            <td colspan="1">
-                <div>Bad results? Save the screenshot you pasted, contact Shy Teddy.</div>
-            </td>
-
         </tr>
         <tr>
             <td class="item-settings">
@@ -41,7 +48,11 @@
                 <span id="itemSettings" class="item-settings"></span>
             </td>
             <td class="no-stretch"><img id="image" src="example.png"></td>
-            <td><span id="found">No findings yet.</span></td>
+            <td>
+                <div id="status" class="bold">Status: waiting for the screenshot...</div>
+                <hr>
+                <div><span id="found"></span> </div>
+            </td>
         </tr>
     </table>
 </body>
