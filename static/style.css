@@ -32,13 +32,36 @@ td {
 }
 
 td.item-settings {
-  width: 50%;
+  width: 20%;
 }
 
 span.item-settings {
   display: flex;
-  flex-wrap: wrap;
   flex-direction: row;
+  gap: 5px;
+}
+
+.category-nav {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid;
+  padding-right: 5px;
+  min-width: 120px;
+}
+
+.category-nav-item {
+  padding: 3px 5px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.category-nav-item.active {
+  font-weight: bold;
+}
+
+.category-content {
+  flex: 1;
 }
 
 .item-colspan {
@@ -46,11 +69,14 @@ span.item-settings {
 }
 
 .item-category {
-  display: flex;
+  display: none;
   flex-wrap: nowrap;
   flex-direction: column;
   padding: 5px;
-  border-style: groove;
+}
+
+.item-category.active {
+  display: flex;
 }
 
 .item-item {

@@ -54,34 +54,62 @@ tlootWASM = {
         const settingsParent = document.getElementById('itemSettings');
         settingsParent.innerHTML = '';
 
+        const navDiv = document.createElement('div');
+        navDiv.classList.add('category-nav');
+        settingsParent.appendChild(navDiv);
+
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('category-content');
+        settingsParent.appendChild(contentDiv);
+
+        const selectCategory = (navItem, cDiv) => {
+            navDiv.querySelectorAll('.category-nav-item').forEach((el) => el.classList.remove('active'));
+            contentDiv.querySelectorAll('.item-category').forEach((el) => el.classList.remove('active'));
+            navItem.classList.add('active');
+            cDiv.classList.add('active');
+        };
+
+        let firstNavItem = null;
+        let firstCDiv = null;
+
         Object.entries(categories).forEach(([category, ids]) => {
+            const navItem = document.createElement('div');
+            navItem.classList.add('category-nav-item');
+            navItem.innerText = category;
+            navDiv.appendChild(navItem);
+
             const cDiv = document.createElement('div');
-            cDiv.classList.add('item-category')
-            settingsParent.appendChild(cDiv);
+            cDiv.classList.add('item-category');
+            contentDiv.appendChild(cDiv);
+
+            navItem.addEventListener('click', () => selectCategory(navItem, cDiv));
+
+            if (!firstNavItem) {
+                firstNavItem = navItem;
+                firstCDiv = cDiv;
+            }
 
             const headerDiv = document.createElement('div');
             headerDiv.classList.add('category-header');
             cDiv.appendChild(headerDiv);
-
-            const tDiv = document.createElement('div');
-            tDiv.classList.add('bold');
-            tDiv.classList.add('no-select');
-            tDiv.innerText = category;
-            headerDiv.appendChild(tDiv);
 
             const btnDiv = document.createElement('div');
             btnDiv.classList.add('category-buttons');
             headerDiv.appendChild(btnDiv);
 
             const enableBtn = document.createElement('button');
-            enableBtn.textContent = 'Enable';
+            enableBtn.textContent = `Enable ${category}`;
             enableBtn.addEventListener('click', () => tlootWASM.setCategoryEnabled(ids, true));
             btnDiv.appendChild(enableBtn);
 
             const disableBtn = document.createElement('button');
-            disableBtn.textContent = 'Disable';
+            disableBtn.textContent = `Disable ${category}`;
             disableBtn.addEventListener('click', () => tlootWASM.setCategoryEnabled(ids, false));
             btnDiv.appendChild(disableBtn);
+
+            const hrDiv = document.createElement('div');
+            hrDiv.appendChild(document.createElement('hr'));
+            cDiv.appendChild(hrDiv);
 
             ids.forEach((id) => {
                 const iDiv = document.createElement('div');
@@ -142,6 +170,10 @@ tlootWASM = {
                 rSpan.appendChild(iVal);
             });
         });
+
+        if (firstNavItem) {
+            selectCategory(firstNavItem, firstCDiv);
+        }
     },
     setAllEnabled: (enabled) => {
         document.querySelectorAll('.stored-enabled').forEach((chk) => {
