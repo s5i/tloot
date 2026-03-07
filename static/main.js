@@ -281,14 +281,28 @@ tlootWASM.onReady = () => {
         };
 
         let processAllItems = (handler) => {
-            let promises = [];
+            let promise = new Promise(function (resolve) { resolve([]); });
+
             Object.entries(tlootWASM.items).forEach(([_, item]) => {
                 if (tlootWASM.getItemEnabled(item.id)) {
-                    promises.push(processSingleItem(handler, item));
+                    promise = new Promise(function (resolve, reject) {
+                        promise.then((results) => {
+                            setTimeout(() => {
+                                processSingleItem(handler, item)
+                                    .then((r) => {
+                                        results.push(r);
+                                        resolve(results);
+                                    })
+                                    .catch((err) => {
+                                        reject(err);
+                                    });
+                            }, 10);
+                        });
+                    });
                 }
             });
 
-            return Promise.all(promises);
+            return promise;
         }
 
         let mergeResults = (results) => {
