@@ -258,8 +258,6 @@ tlootWASM.onReady = () => {
 
         let processSingleItem = (handler, item) => {
             return new Promise(function (resolve, reject) {
-                tlootWASM.setStatus(`processing ${item.name}...`);
-
                 const processRet = handler(item.id);
                 if (processRet.error) {
                     reject(`processSingleItem: ${processRet.error}`);
@@ -282,14 +280,18 @@ tlootWASM.onReady = () => {
 
         let processAllItems = (handler) => {
             let promise = new Promise(function (resolve) { resolve([]); });
-
+            let toProcess = 0;
+            let processed = 0;
             Object.entries(tlootWASM.items).forEach(([_, item]) => {
                 if (tlootWASM.getItemEnabled(item.id)) {
+                    toProcess++;
                     promise = new Promise(function (resolve, reject) {
                         promise.then((results) => {
                             setTimeout(() => {
+                                tlootWASM.setStatus(`${Math.floor(processed / toProcess * 100)}% - processing ${item.name}...`);
                                 processSingleItem(handler, item)
                                     .then((r) => {
+                                        processed++;
                                         results.push(r);
                                         resolve(results);
                                     })
