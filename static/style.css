@@ -17,6 +17,10 @@ td {
   text-align: left;
 }
 
+.no-border {
+  border: 0px;
+}
+
 .bold {
   font-weight: bold;
 }
