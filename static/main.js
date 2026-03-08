@@ -22,21 +22,66 @@ tlootWASM = {
         console.log(status);
         document.getElementById('status').textContent = status;
     },
-    clearFound: () => {
-        document.getElementById('found').innerHTML = "";
-    },
-    addFound: (text, bold = false) => {
-        const found = document.getElementById('found');
-        const line = document.createElement('div');
-        line.innerText = text;
-        if (bold) {
-            line.classList.add('bold');
+    pasteEnabled: true,
+    screenshotId: 0,
+    found: {},
+    addFound: (screenshot_id, item_id, count) => {
+        if (!(screenshot_id in tlootWASM.found)) {
+            tlootWASM.found[screenshot_id] = {};
         }
-        found.appendChild(line);
+        if (!(item_id in tlootWASM.found[screenshot_id])) {
+            tlootWASM.found[screenshot_id][item_id] = 0;
+        }
+        tlootWASM.found[screenshot_id][item_id] += count;
+        tlootWASM.refreshFound();
     },
-    setImageSource: (src) => {
-        const img = document.getElementById('image');
+    refreshFound: () => {
+        const found = document.getElementById('found');
+        found.innerHTML = '';
+        let total = 0;
+
+        Object.entries(tlootWASM.found).forEach(([screenshot_id, counts]) => {
+            let screenshotTotal = 0;
+
+            const line = document.createElement('div');
+            line.classList.add('bold');
+            line.innerText = `Screenshot #${Number(screenshot_id) + 1}:`;
+            found.appendChild(line);
+
+            Object.entries(counts).forEach(([item_id, count]) => {
+                const line = document.createElement('div');
+                const name = tlootWASM.getItemName(item_id);
+                const value = tlootWASM.getItemValue(item_id);
+                line.innerText = `${name}: ${count} x ${value} gp = ${count * value} gp`;
+                found.appendChild(line);
+
+                total += count * value;
+                screenshotTotal += count * value;
+            });
+
+            const scrTotal = document.createElement('div');
+            scrTotal.classList.add('bold');
+            scrTotal.innerText = `Screenshot value: ${screenshotTotal}`;
+            found.appendChild(scrTotal);
+
+            const sep = document.createElement('hr');
+            found.appendChild(sep);
+        });
+
+        const grandTotal = document.createElement('div');
+        grandTotal.classList.add('bold');
+        grandTotal.innerText = `Total value: ${total}`;
+        found.appendChild(grandTotal);
+    },
+    hideExampleImage: (src) => {
+        const img = document.getElementById('exampleImage');
+        img.setAttribute('hidden', true);
+    },
+    addImage: (src) => {
+        const imgs = document.getElementById('images');
+        const img = document.createElement('img');
         img.src = src;
+        imgs.appendChild(img);
     },
     getItemName: (id) => {
         return tlootWASM.items[id].name;
@@ -179,6 +224,7 @@ tlootWASM = {
                     } else {
                         iVal.classList.remove('modified-value');
                     }
+                    tlootWASM.refreshFound();
                 })
                 rSpan.appendChild(iVal);
             });
@@ -206,7 +252,9 @@ tlootWASM = {
             const id = input.id.replace('_value', '');
             input.value = Number(tlootWASM.items[id].value);
             window.localStorage.removeItem(input.id);
+            input.classList.remove('modified-value');
         });
+        tlootWASM.refreshFound();
     },
     resetEnabled: () => {
         document.querySelectorAll('.stored-enabled').forEach((input) => {
@@ -234,14 +282,22 @@ tlootWASM.onReady = () => {
     window.addEventListener("paste", (event) => {
         event.preventDefault();
 
+        if (!tlootWASM.pasteEnabled) {
+            return;
+        }
+
+        tlootWASM.pasteEnabled = false;
+
         if (event.clipboardData.files.length == 0) {
             tlootWASM.setError("non-screenshot paste detected.")
+            tlootWASM.pasteEnabled = true;
             return;
         }
 
         const f = event.clipboardData.files[0];
         if (f.type != "image/png") {
             tlootWASM.setError("non-PNG paste detected.")
+            tlootWASM.pasteEnabled = true;
             return;
         }
 
@@ -265,13 +321,11 @@ tlootWASM.onReady = () => {
                 }
 
                 const r = processRet.result;
-                const id = r.id;
+                const item_id = r.id;
                 const count = r.count;
-                const name = tlootWASM.getItemName(id);
-                const value = tlootWASM.getItemValue(id);
 
                 if (count > 0) {
-                    tlootWASM.addFound(`${name}: ${count} x ${value} gp = ${count * value} gp`);
+                    tlootWASM.addFound(tlootWASM.screenshotId, item_id, count);
                 }
 
                 resolve(r);
@@ -307,42 +361,23 @@ tlootWASM.onReady = () => {
             return promise;
         }
 
-        let mergeResults = (results) => {
-            return new Promise(function (resolve, reject) {
-                let totalCount = 0;
-                let totalValue = 0;
-
-                for (r of results) {
-                    const id = r.id;
-                    const count = r.count;
-                    const value = tlootWASM.getItemValue(id);
-
-                    totalCount += count;
-                    totalValue += count * value;
-
-                    if (count > 0 && value <= 0) {
-                        hasPlayerItems = true;
-                    }
-                }
-
-                tlootWASM.addFound(`Total: ${totalCount} items worth ${totalValue} gp.`, true);
-
-                resolve();
-            });
-        };
-
         f.bytes().then((imgBytes) => {
-            tlootWASM.setImageSource(window.URL.createObjectURL(new Blob([imgBytes], { type: "image/png" })));
-            tlootWASM.clearFound();
+            tlootWASM.hideExampleImage();
+            tlootWASM.addImage(window.URL.createObjectURL(new Blob([imgBytes], { type: "image/png" })));
             tlootWASM.setStatus(`processing...`);
 
             setTimeout(() => {
                 const start = performance.now();
                 getProcessor(imgBytes)
                     .then(processAllItems)
-                    .then(mergeResults)
-                    .then(() => { tlootWASM.setStatus(`processing took ${((performance.now() - start) / 1000).toPrecision(2)}s.`); })
-                    .catch(err => { tlootWASM.setError(err); });
+                    .then(() => {
+                        tlootWASM.setStatus(`processing took ${((performance.now() - start) / 1000).toPrecision(2)}s.`);
+                    })
+                    .catch(err => { tlootWASM.setError(err); })
+                    .finally(() => {
+                        tlootWASM.screenshotId++;
+                        tlootWASM.pasteEnabled = true;
+                    });
             }, 50);
         });
     });
