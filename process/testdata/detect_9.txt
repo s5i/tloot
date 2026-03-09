@@ -1,0 +1,9 @@
+Total item count: 13
+
+Bow: 1
+Crossbow: 3
+Dark Armor: 3
+Devil Helmet: 2
+Plate Armor: 1
+Plate Legs: 1
+Steel Helmet: 2

@@ -1,0 +1,12 @@
+Total item count: 10
+
+Axe Ring: 1
+Club Ring: 1
+Dwarven Ring: 1
+Energy Ring: 1
+Life Ring: 1
+Might Ring: 1
+Power Ring: 1
+Ring of Healing: 1
+Stealth Ring: 1
+Sword Ring: 1

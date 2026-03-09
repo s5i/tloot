@@ -406,57 +406,68 @@ items:
     value: 160
     category: Distance
 
-  3245:
-    name: Ring of the Skies
-    value: -10000
-    category: Rings
   3098:
     name: Ring of Healing
     value: -1400
     category: Rings
+    detect_precision: 96
   3052:
     name: Life Ring
     value: -800
     category: Rings
+    detect_precision: 96
   3051:
     name: Energy Ring
     value: -350
     category: Rings
+    detect_precision: 96
   3053:
     name: Time Ring
     value: -3000
     category: Rings
+    detect_precision: 96
   3091:
     name: Sword Ring
     value: -300
     category: Rings
+    detect_precision: 96
   3093:
     name: Club Ring
     value: -300
     category: Rings
+    detect_precision: 96
   3092:
     name: Axe Ring
     value: -300
     category: Rings
+    detect_precision: 96
   3049:
     name: Stealth Ring
     value: -5000
     category: Rings
+    detect_precision: 96
   3048:
     name: Might Ring
     value: -5000
     category: Rings
-  3063:
-    name: Golden Ring
-    value: -500
-    category: Rings
+    detect_precision: 96
   3097:
     name: Dwarven Ring
     value: -500
     category: Rings
+    detect_precision: 96
   3050:
     name: Power Ring
     value: 50
+    category: Rings
+    detect_precision: 96
+  3063:
+    name: Golden Ring
+    value: -500
+    category: Rings
+  3245:
+    name: Ring of the Skies
+    value: -10000
     category: Rings
 
   3025:
@@ -507,3 +518,8 @@ items:
     name: Strange Symbol
     value: -500
     category: Amulets
+
+  3046:
+    name: Magic Light Wand
+    value: -150
+    category: Misc
