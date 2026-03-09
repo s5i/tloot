@@ -41,6 +41,7 @@ func main() {
 	listen := cfg.ProvidedEndpoints.UI
 	mux := http.NewServeMux()
 	mux.Handle("/", http.HandlerFunc(staticHandler))
+	mux.Handle("/meta/version", http.HandlerFunc(versionHandler))
 	mux.Handle("/d/", noCache(http.StripPrefix("/d", http.FileServer(http.Dir(cfg.DynamicFilesPath)))))
 
 	srv := http.Server{
@@ -91,6 +92,13 @@ func staticHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := writer.Write(content); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func versionHandler(w http.ResponseWriter, r *http.Request) {
+	if _, err := w.Write([]byte(version.Get())); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
