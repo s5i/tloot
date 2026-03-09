@@ -5,7 +5,7 @@ new Promise((resolve, reject) => {
             resolve(request.responseText);
         }
     });
-    request.open("GET", "/d/motd.html");
+    request.open("GET", "/motd.html");
     request.send();
 }).then((data) => {
     document.getElementById('motd').innerHTML = data;
@@ -199,8 +199,13 @@ tlootWASM = {
                 iChk.id = `${id}_enabled`;
                 let enabled = window.localStorage.getItem(iChk.id);
                 if (enabled === null) {
-                    enabled = items[id].enabled;
+                    enabled = tlootWASM.items[id].enabled;
                 }
+                if (tlootWASM.items[id].forceDisabled) {
+                    enabled = false;
+                    iChk.disabled = true;
+                }
+
                 iChk.checked = !!Number(enabled);
                 iChk.classList.add('stored-enabled');
                 iChk.addEventListener("change", (event) => {
@@ -219,12 +224,12 @@ tlootWASM = {
                 iVal.id = `${id}_value`;
                 let value = window.localStorage.getItem(iVal.id);
                 if (value === null) {
-                    value = Number(items[id].value);
+                    value = Number(tlootWASM.items[id].value);
                 }
-                if (items[id].market) {
+                if (tlootWASM.items[id].market) {
                     iVal.classList.add('market-value');
                 }
-                if (value != Number(items[id].value)) {
+                if (value != Number(tlootWASM.items[id].value)) {
                     iVal.classList.add('modified-value');
                 }
                 iVal.value = value;
@@ -232,7 +237,7 @@ tlootWASM = {
                 iVal.classList.add('stored-price');
                 iVal.addEventListener("change", (event) => {
                     window.localStorage.setItem(event.target.id, event.target.value);
-                    if (event.target.value != Number(items[id].value)) {
+                    if (event.target.value != Number(tlootWASM.items[id].value)) {
                         iVal.classList.add('modified-value');
                     } else {
                         iVal.classList.remove('modified-value');
@@ -249,12 +254,21 @@ tlootWASM = {
     },
     setAllEnabled: (enabled) => {
         document.querySelectorAll('.stored-enabled').forEach((chk) => {
+            const id = chk.id.replace('_enabled', '');
+            if (tlootWASM.items[id].forceDisabled) {
+                return;
+            }
+
             chk.checked = enabled;
             window.localStorage.setItem(chk.id, +chk.checked);
         });
     },
     setCategoryEnabled: (ids, enabled) => {
         ids.forEach((id) => {
+            if (tlootWASM.items[id].forceDisabled) {
+                return;
+            }
+
             const chk = document.getElementById(`${id}_enabled`);
             chk.checked = enabled;
             window.localStorage.setItem(chk.id, +chk.checked);

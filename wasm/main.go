@@ -41,12 +41,13 @@ func main() {
 				market = true
 			}
 			results[fmt.Sprintf("%d", item.ID)] = map[string]any{
-				"id":       item.ID,
-				"name":     item.Name,
-				"value":    value,
-				"market":   market,
-				"category": item.Category,
-				"enabled":  true,
+				"id":            item.ID,
+				"name":          item.Name,
+				"value":         value,
+				"market":        market,
+				"category":      item.Category,
+				"enabled":       !item.ForceDisabled,
+				"forceDisabled": item.ForceDisabled,
 			}
 		}
 

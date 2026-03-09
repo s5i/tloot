@@ -425,7 +425,7 @@ items:
     name: Time Ring
     value: -3000
     category: Rings
-    detect_precision: 96
+    detect_precision: 94
   3091:
     name: Sword Ring
     value: -300
@@ -460,7 +460,8 @@ items:
     name: Power Ring
     value: 50
     category: Rings
-    detect_precision: 96
+    detect_precision: 97
+    force_disable: true
   3063:
     name: Golden Ring
     value: -500

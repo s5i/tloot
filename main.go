@@ -40,9 +40,8 @@ func main() {
 
 	listen := cfg.ProvidedEndpoints.UI
 	mux := http.NewServeMux()
-	mux.Handle("/", http.HandlerFunc(staticHandler))
-	mux.Handle("/meta/version", http.HandlerFunc(versionHandler))
-	mux.Handle("/d/", noCache(http.StripPrefix("/d", http.FileServer(http.Dir(cfg.DynamicFilesPath)))))
+	mux.Handle("/", staticFallbackHandler(cfg.DynamicFilesPath))
+	mux.Handle("/meta/version", versionHandler())
 
 	srv := http.Server{
 		Addr:    listen,
@@ -63,44 +62,52 @@ func main() {
 	}
 }
 
-func noCache(h http.Handler) http.HandlerFunc {
+func staticFallbackHandler(dynamicFilesPath string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Cache-Control", "no-cache, private, max-age=0")
-		h.ServeHTTP(w, r)
+		f := strings.TrimPrefix(r.URL.Path, "/")
+		if f == "" {
+			f = "index.html"
+		}
+
+		content, err := func() ([]byte, error) {
+			if filepath.IsLocal(f) {
+				path := filepath.Join(dynamicFilesPath, f)
+				if c, err := os.ReadFile(path); err == nil {
+					return c, nil
+				}
+			}
+
+			path := filepath.Join("static", f)
+			return staticData.ReadFile(path)
+		}()
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Type", contentType(f))
+
+		var writer io.Writer = w
+		if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+			w.Header().Set("Content-Encoding", "gzip")
+			gz := gzip.NewWriter(w)
+			defer gz.Close()
+			writer = gz
+		}
+
+		if _, err := writer.Write(content); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 }
-
-func staticHandler(w http.ResponseWriter, r *http.Request) {
-	f := r.URL.Path
-	if f == "/" {
-		f = "/index.html"
-	}
-
-	content, err := staticData.ReadFile(filepath.Join("static", f))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	w.Header().Set("Content-Type", contentType(f))
-
-	var writer io.Writer = w
-	if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-		w.Header().Set("Content-Encoding", "gzip")
-		gz := gzip.NewWriter(w)
-		defer gz.Close()
-		writer = gz
-	}
-
-	if _, err := writer.Write(content); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func versionHandler(w http.ResponseWriter, r *http.Request) {
-	if _, err := w.Write([]byte(version.Get())); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+func versionHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if _, err := w.Write([]byte(version.Get())); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 }
 

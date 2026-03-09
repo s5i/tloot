@@ -12,6 +12,7 @@ type ItemConfig struct {
 	Value           int    `yaml:"value"`
 	Category        string `yaml:"category"`
 	DetectPrecision int    `yaml:"detect_precision"`
+	ForceDisabled    bool   `yaml:"force_disable"`
 }
 
 type itemConfig struct {
