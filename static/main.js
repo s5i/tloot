@@ -1,3 +1,256 @@
+tlootWASM = {
+    ready: false,
+    items: {},
+    onReady: () => {
+        const itemsResponse = tlootWASM.getItems();
+        if (itemsResponse.error) {
+            tloot.setError(`getItems: ${itemsResponse.error}`);
+            return;
+        }
+
+        tlootWASM.items = itemsResponse.result;
+        tlootWASM.ready = true;
+        tloot.loadItemSettings();
+    },
+    checkReady: () => {
+        if (!tlootWASM.ready) {
+            tloot.setError('WASM not ready.');
+        }
+        return tlootWASM.ready;
+    },
+};
+
+tloot = {
+    pasteEnabled: true,
+    screenshotId: 0,
+    found: {},
+
+    addDOMElement: (parent, type, classes) => {
+        const ret = document.createElement(type);
+        if (classes) {
+            classes.forEach((c) => {
+                ret.classList.add(c);
+            });
+        }
+        parent.appendChild(ret);
+        return ret;
+    },
+    setStatus: (s) => {
+        let status = `Status: ${s}`;
+        document.getElementById('status').textContent = status;
+    },
+    setError: (s) => {
+        let status = `Error: ${s}`;
+        console.log(status);
+        document.getElementById('status').textContent = status;
+    },
+    addFound: (screenshot_id, item_id, count) => {
+        if (!(screenshot_id in tloot.found)) {
+            tloot.found[screenshot_id] = {};
+        }
+        if (!(item_id in tloot.found[screenshot_id])) {
+            tloot.found[screenshot_id][item_id] = 0;
+        }
+        tloot.found[screenshot_id][item_id] += count;
+        tloot.refreshFound();
+    },
+    refreshFound: () => {
+        const found = document.getElementById('found');
+        found.innerHTML = '';
+        let totalCount = 0;
+        let totalValue = 0;
+
+        Object.entries(tloot.found).forEach(([screenshot_id, counts]) => {
+            let scrCount = 0;
+            let scrValue = 0;
+
+            const line = tloot.addDOMElement(found, 'div', ['bold']);
+            line.innerText = `Screenshot #${Number(screenshot_id) + 1}:`;
+
+            Object.entries(counts).forEach(([item_id, count]) => {
+                const name = tloot.getItemName(item_id);
+                const value = tloot.getItemValue(item_id);
+                const ctVal = count * value;
+
+                scrCount += count;
+                totalCount += count;
+                scrValue += ctVal;
+                totalValue += ctVal;
+
+                const line = tloot.addDOMElement(found, 'div');
+                line.innerText = `${name}: ${count} x ${value} gp = ${ctVal} gp`;
+            });
+
+
+            const scrResult = tloot.addDOMElement(found, 'div', ['bold']);
+            scrResult.innerText = `Screenshot value: ${scrValue}`;
+
+            tloot.addDOMElement(found, 'hr');
+        });
+
+        const totalResult = tloot.addDOMElement(found, 'div', ['bold']);
+        totalResult.innerText = `Total value: ${totalValue}`;
+    },
+    hideExampleImage: (src) => {
+        const img = document.getElementById('exampleImage');
+        img.setAttribute('hidden', true);
+    },
+    addImage: (src) => {
+        const img = tloot.addDOMElement(document.getElementById('images'), 'img');
+        img.src = src;
+    },
+    getItemName: (id) => {
+        const items = tlootWASM.items;
+        return items[id].name;
+    },
+    getItemEnabled: (id) => {
+        return document.getElementById(`${id}_enabled`).checked;
+    },
+    getItemValue: (id) => {
+        return document.getElementById(`${id}_value`).value;
+    },
+    loadItemSettings: () => {
+        const items = tlootWASM.items;
+        const categories = Object.fromEntries(
+            Object.values(items)
+                .map((item) => item.category)
+                .filter((v, idx, arr) => { return arr.indexOf(v) === idx; })
+                .sort()
+                .map((category) => [
+                    category,
+                    Object.values(items)
+                        .filter((v) => { return v.category === category; })
+                        .sort((a, b) => a.name == b.name ? 0 : a.name < b.name ? -1 : 1)
+                        .map((item) => item.id),
+                ])
+        );
+
+        const root = document.getElementById('itemSettings');
+        root.innerHTML = '';
+
+        const navDiv = tloot.addDOMElement(root, 'div', ['category-nav']);
+        const contentDiv = tloot.addDOMElement(root, 'div', ['category-content']);
+
+        const selectCategory = (navItem, cDiv) => {
+            navDiv.querySelectorAll('.category-nav-item').forEach((el) => el.classList.remove('active'));
+            contentDiv.querySelectorAll('.item-category').forEach((el) => el.classList.remove('active'));
+            navItem.classList.add('active');
+            cDiv.classList.add('active');
+        };
+
+        let firstNavItem = null;
+        let firstCDiv = null;
+
+        Object.entries(categories).forEach(([category, ids]) => {
+            const cDiv = tloot.addDOMElement(contentDiv, 'div', ['item-category']);
+            const navItem = tloot.addDOMElement(navDiv, 'div', ['category-nav-item']);
+            navItem.innerText = category;
+            navItem.addEventListener('click', () => selectCategory(navItem, cDiv));
+
+            if (!firstNavItem) {
+                firstNavItem = navItem;
+                firstCDiv = cDiv;
+            }
+
+            const headerDiv = tloot.addDOMElement(cDiv, 'div', ['category-header']);
+            const btnDiv = tloot.addDOMElement(headerDiv, 'div', ['category-buttons']);
+
+            const enableBtn = tloot.addDOMElement(btnDiv, 'button');
+            enableBtn.textContent = `Enable ${category}`;
+            enableBtn.addEventListener('click', () => tloot.setCategoryEnabled(ids, true));
+
+            const disableBtn = tloot.addDOMElement(btnDiv, 'button');
+            disableBtn.textContent = `Disable ${category}`;
+            disableBtn.addEventListener('click', () => tloot.setCategoryEnabled(ids, false));
+
+            const hrDiv = tloot.addDOMElement(cDiv, 'div');
+            tloot.addDOMElement(hrDiv, 'hr');
+
+            ids.forEach((id) => {
+                const iDiv = tloot.addDOMElement(cDiv, 'div', ['item-item']);
+                const lSpan = tloot.addDOMElement(iDiv, 'span', ['item-colspan']);
+                const rSpan = tloot.addDOMElement(iDiv, 'span', ['item-colspan']);
+
+                const iChk = tloot.addDOMElement(lSpan, 'input', ['stored-enabled']);
+                iChk.id = `${id}_enabled`;
+                iChk.type = 'checkbox';
+                iChk.checked = !items[id].forceDisabled && !!Number(window.localStorage.getItem(iChk.id) || items[id].enabled);
+                iChk.disabled = items[id].forceDisabled;
+                iChk.addEventListener("change", (event) => {
+                    window.localStorage.setItem(event.target.id, +event.target.checked);
+                });
+
+                const iTxt = tloot.addDOMElement(lSpan, 'label', ['no-select']);
+                iTxt.innerText = items[id].name;
+                iTxt.htmlFor = iChk.id;
+
+                const iVal = tloot.addDOMElement(rSpan, 'input', ['item-value', 'stored-price']);
+                iVal.id = `${id}_value`;
+                iVal.type = 'number';
+                iVal.value = Number(window.localStorage.getItem(iVal.id) || items[id].value);
+                if (items[id].market) {
+                    iVal.classList.add('market-value');
+                }
+                if (iVal.value != Number(items[id].value)) {
+                    iVal.classList.add('modified-value');
+                }
+                iVal.addEventListener("change", (event) => {
+                    window.localStorage.setItem(event.target.id, event.target.value);
+                    if (event.target.value != Number(items[id].value)) {
+                        iVal.classList.add('modified-value');
+                    } else {
+                        iVal.classList.remove('modified-value');
+                    }
+                    tloot.refreshFound();
+                });
+            });
+        });
+
+        if (firstNavItem) {
+            selectCategory(firstNavItem, firstCDiv);
+        }
+    },
+    setAllEnabled: (enabled) => {
+        const items = tlootWASM.items;
+        document.querySelectorAll('.stored-enabled').forEach((chk) => {
+            const id = chk.id.replace('_enabled', '');
+            if (items[id].forceDisabled) {
+                return;
+            }
+
+            chk.checked = enabled;
+            window.localStorage.setItem(chk.id, +chk.checked);
+        });
+    },
+    setCategoryEnabled: (ids, enabled) => {
+        const items = tlootWASM.items;
+        ids.forEach((id) => {
+            if (items[id].forceDisabled) {
+                return;
+            }
+
+            const chk = document.getElementById(`${id}_enabled`);
+            chk.checked = enabled;
+            window.localStorage.setItem(chk.id, +chk.checked);
+        });
+    },
+    resetPrices: () => {
+        document.querySelectorAll('.stored-price').forEach((input) => {
+            const items = tlootWASM.items;
+            const id = input.id.replace('_value', '');
+            input.value = Number(items[id].value);
+            window.localStorage.removeItem(input.id);
+            input.classList.remove('modified-value');
+        });
+        tloot.refreshFound();
+    },
+};
+
+const go = new Go();
+WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
+    go.run(result.instance);
+});
+
 new Promise((resolve, reject) => {
     let request = new XMLHttpRequest();
     request.addEventListener("readystatechange", () => {
@@ -24,307 +277,53 @@ new Promise((resolve, reject) => {
     document.getElementById('title').innerText = `TLoot ${data}`;
 }).catch(() => { });
 
-tlootWASM = {
-    setStatus: (s) => {
-        let status = `Status: ${s}`;
-        console.log(status);
-        document.getElementById('status').textContent = status;
-    },
-    setError: (s) => {
-        let status = `Error: ${s}`;
-        console.log(status);
-        document.getElementById('status').textContent = status;
-    },
-    pasteEnabled: true,
-    screenshotId: 0,
-    found: {},
-    addFound: (screenshot_id, item_id, count) => {
-        if (!(screenshot_id in tlootWASM.found)) {
-            tlootWASM.found[screenshot_id] = {};
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('enableAll').addEventListener('click', () => {
+        if (!tlootWASM.checkReady()) {
+            return;
         }
-        if (!(item_id in tlootWASM.found[screenshot_id])) {
-            tlootWASM.found[screenshot_id][item_id] = 0;
+
+        tloot.setAllEnabled(true);
+    });
+
+    document.getElementById('disableAll').addEventListener('click', () => {
+        if (!tlootWASM.checkReady()) {
+            return;
         }
-        tlootWASM.found[screenshot_id][item_id] += count;
-        tlootWASM.refreshFound();
-    },
-    refreshFound: () => {
-        const found = document.getElementById('found');
-        found.innerHTML = '';
-        let total = 0;
+        tloot.setAllEnabled(false);
+    });
 
-        Object.entries(tlootWASM.found).forEach(([screenshot_id, counts]) => {
-            let screenshotTotal = 0;
-
-            const line = document.createElement('div');
-            line.classList.add('bold');
-            line.innerText = `Screenshot #${Number(screenshot_id) + 1}:`;
-            found.appendChild(line);
-
-            Object.entries(counts).forEach(([item_id, count]) => {
-                const line = document.createElement('div');
-                const name = tlootWASM.getItemName(item_id);
-                const value = tlootWASM.getItemValue(item_id);
-                line.innerText = `${name}: ${count} x ${value} gp = ${count * value} gp`;
-                found.appendChild(line);
-
-                total += count * value;
-                screenshotTotal += count * value;
-            });
-
-            const scrTotal = document.createElement('div');
-            scrTotal.classList.add('bold');
-            scrTotal.innerText = `Screenshot value: ${screenshotTotal}`;
-            found.appendChild(scrTotal);
-
-            const sep = document.createElement('hr');
-            found.appendChild(sep);
-        });
-
-        const grandTotal = document.createElement('div');
-        grandTotal.classList.add('bold');
-        grandTotal.innerText = `Total value: ${total}`;
-        found.appendChild(grandTotal);
-    },
-    hideExampleImage: (src) => {
-        const img = document.getElementById('exampleImage');
-        img.setAttribute('hidden', true);
-    },
-    addImage: (src) => {
-        const imgs = document.getElementById('images');
-        const img = document.createElement('img');
-        img.src = src;
-        imgs.appendChild(img);
-    },
-    getItemName: (id) => {
-        return tlootWASM.items[id].name;
-    },
-    getItemEnabled: (id) => {
-        return document.getElementById(`${id}_enabled`).checked;
-    },
-    getItemValue: (id) => {
-        return document.getElementById(`${id}_value`).value;
-    },
-    loadItemSettings: () => {
-        const items = tlootWASM.items;
-
-        const categories = Object.fromEntries(
-            Object.values(items)
-                .map((item) => item.category)
-                .filter((v, idx, arr) => { return arr.indexOf(v) === idx; })
-                .sort()
-                .map((category) => [
-                    category,
-                    Object.values(items)
-                        .filter((v) => { return v.category === category; })
-                        .sort((a, b) => a.name == b.name ? 0 : a.name < b.name ? -1 : 1)
-                        .map((item) => item.id),
-                ])
-        );
-
-        const settingsParent = document.getElementById('itemSettings');
-        settingsParent.innerHTML = '';
-
-        const navDiv = document.createElement('div');
-        navDiv.classList.add('category-nav');
-        settingsParent.appendChild(navDiv);
-
-        const contentDiv = document.createElement('div');
-        contentDiv.classList.add('category-content');
-        settingsParent.appendChild(contentDiv);
-
-        const selectCategory = (navItem, cDiv) => {
-            navDiv.querySelectorAll('.category-nav-item').forEach((el) => el.classList.remove('active'));
-            contentDiv.querySelectorAll('.item-category').forEach((el) => el.classList.remove('active'));
-            navItem.classList.add('active');
-            cDiv.classList.add('active');
-        };
-
-        let firstNavItem = null;
-        let firstCDiv = null;
-
-        Object.entries(categories).forEach(([category, ids]) => {
-            const navItem = document.createElement('div');
-            navItem.classList.add('category-nav-item');
-            navItem.innerText = category;
-            navDiv.appendChild(navItem);
-
-            const cDiv = document.createElement('div');
-            cDiv.classList.add('item-category');
-            contentDiv.appendChild(cDiv);
-
-            navItem.addEventListener('click', () => selectCategory(navItem, cDiv));
-
-            if (!firstNavItem) {
-                firstNavItem = navItem;
-                firstCDiv = cDiv;
-            }
-
-            const headerDiv = document.createElement('div');
-            headerDiv.classList.add('category-header');
-            cDiv.appendChild(headerDiv);
-
-            const btnDiv = document.createElement('div');
-            btnDiv.classList.add('category-buttons');
-            headerDiv.appendChild(btnDiv);
-
-            const enableBtn = document.createElement('button');
-            enableBtn.textContent = `Enable ${category}`;
-            enableBtn.addEventListener('click', () => tlootWASM.setCategoryEnabled(ids, true));
-            btnDiv.appendChild(enableBtn);
-
-            const disableBtn = document.createElement('button');
-            disableBtn.textContent = `Disable ${category}`;
-            disableBtn.addEventListener('click', () => tlootWASM.setCategoryEnabled(ids, false));
-            btnDiv.appendChild(disableBtn);
-
-            const hrDiv = document.createElement('div');
-            hrDiv.appendChild(document.createElement('hr'));
-            cDiv.appendChild(hrDiv);
-
-            ids.forEach((id) => {
-                const iDiv = document.createElement('div');
-                iDiv.classList.add('item-item');
-                cDiv.appendChild(iDiv);
-
-                const lSpan = document.createElement('span');
-                const rSpan = document.createElement('span');
-                lSpan.classList.add('item-colspan');
-                rSpan.classList.add('item-colspan');
-                iDiv.appendChild(lSpan);
-                iDiv.appendChild(rSpan);
-
-                const iChk = document.createElement('input');
-                iChk.type = 'checkbox';
-                iChk.id = `${id}_enabled`;
-                let enabled = window.localStorage.getItem(iChk.id);
-                if (enabled === null) {
-                    enabled = tlootWASM.items[id].enabled;
-                }
-                if (tlootWASM.items[id].forceDisabled) {
-                    enabled = false;
-                    iChk.disabled = true;
-                }
-
-                iChk.checked = !!Number(enabled);
-                iChk.classList.add('stored-enabled');
-                iChk.addEventListener("change", (event) => {
-                    window.localStorage.setItem(event.target.id, +event.target.checked);
-                })
-                lSpan.appendChild(iChk);
-
-                const iTxt = document.createElement('label');
-                iTxt.innerText = items[id].name;
-                iTxt.htmlFor = iChk.id;
-                iTxt.classList.add('no-select');
-                lSpan.appendChild(iTxt);
-
-                const iVal = document.createElement('input');
-                iVal.type = 'number';
-                iVal.id = `${id}_value`;
-                let value = window.localStorage.getItem(iVal.id);
-                if (value === null) {
-                    value = Number(tlootWASM.items[id].value);
-                }
-                if (tlootWASM.items[id].market) {
-                    iVal.classList.add('market-value');
-                }
-                if (value != Number(tlootWASM.items[id].value)) {
-                    iVal.classList.add('modified-value');
-                }
-                iVal.value = value;
-                iVal.classList.add('item-value');
-                iVal.classList.add('stored-price');
-                iVal.addEventListener("change", (event) => {
-                    window.localStorage.setItem(event.target.id, event.target.value);
-                    if (event.target.value != Number(tlootWASM.items[id].value)) {
-                        iVal.classList.add('modified-value');
-                    } else {
-                        iVal.classList.remove('modified-value');
-                    }
-                    tlootWASM.refreshFound();
-                })
-                rSpan.appendChild(iVal);
-            });
-        });
-
-        if (firstNavItem) {
-            selectCategory(firstNavItem, firstCDiv);
+    document.getElementById('resetPrices').addEventListener('click', () => {
+        if (!tlootWASM.checkReady()) {
+            return;
         }
-    },
-    setAllEnabled: (enabled) => {
-        document.querySelectorAll('.stored-enabled').forEach((chk) => {
-            const id = chk.id.replace('_enabled', '');
-            if (tlootWASM.items[id].forceDisabled) {
-                return;
-            }
 
-            chk.checked = enabled;
-            window.localStorage.setItem(chk.id, +chk.checked);
-        });
-    },
-    setCategoryEnabled: (ids, enabled) => {
-        ids.forEach((id) => {
-            if (tlootWASM.items[id].forceDisabled) {
-                return;
-            }
-
-            const chk = document.getElementById(`${id}_enabled`);
-            chk.checked = enabled;
-            window.localStorage.setItem(chk.id, +chk.checked);
-        });
-    },
-    resetPrices: () => {
-        document.querySelectorAll('.stored-price').forEach((input) => {
-            const id = input.id.replace('_value', '');
-            input.value = Number(tlootWASM.items[id].value);
-            window.localStorage.removeItem(input.id);
-            input.classList.remove('modified-value');
-        });
-        tlootWASM.refreshFound();
-    },
-    resetEnabled: () => {
-        document.querySelectorAll('.stored-enabled').forEach((input) => {
-            const id = input.id.replace('_enabled', '');
-            input.checked = Number(tlootWASM.items[id].enabled);
-            window.localStorage.removeItem(input.id);
-        });
-    },
-    items: {},
-};
-
-tlootWASM.onReady = () => {
-    const itemsRet = tlootWASM.getItems();
-    if (itemsRet.error) {
-        tlootWASM.setError(`getItems: ${itemsRet.error}`);
-        return
-    }
-    tlootWASM.items = itemsRet.result;
-
-    tlootWASM.loadItemSettings();
-    document.getElementById('enableAll').addEventListener('click', () => tlootWASM.setAllEnabled(true));
-    document.getElementById('disableAll').addEventListener('click', () => tlootWASM.setAllEnabled(false));
-    document.getElementById('resetPrices').addEventListener('click', tlootWASM.resetPrices);
+        tloot.resetPrices();
+    });
 
     window.addEventListener("paste", (event) => {
         event.preventDefault();
 
-        if (!tlootWASM.pasteEnabled) {
+        if (!tlootWASM.checkReady()) {
             return;
         }
 
-        tlootWASM.pasteEnabled = false;
+        if (!tloot.pasteEnabled) {
+            return;
+        }
+
+        tloot.pasteEnabled = false;
 
         if (event.clipboardData.files.length == 0) {
-            tlootWASM.setError("non-screenshot paste detected.")
-            tlootWASM.pasteEnabled = true;
+            tloot.setError("non-screenshot paste detected.")
+            tloot.pasteEnabled = true;
             return;
         }
 
         const f = event.clipboardData.files[0];
         if (f.type != "image/png") {
-            tlootWASM.setError("non-PNG paste detected.")
-            tlootWASM.pasteEnabled = true;
+            tloot.setError("non-PNG paste detected.")
+            tloot.pasteEnabled = true;
             return;
         }
 
@@ -352,7 +351,7 @@ tlootWASM.onReady = () => {
                 const count = r.count;
 
                 if (count > 0) {
-                    tlootWASM.addFound(tlootWASM.screenshotId, item_id, count);
+                    tloot.addFound(tloot.screenshotId, item_id, count);
                 }
 
                 resolve(r);
@@ -360,16 +359,17 @@ tlootWASM.onReady = () => {
         };
 
         let processAllItems = (handler) => {
+            const items = tlootWASM.items;
             let promise = new Promise(function (resolve) { resolve([]); });
             let toProcess = 0;
             let processed = 0;
-            Object.entries(tlootWASM.items).forEach(([_, item]) => {
-                if (tlootWASM.getItemEnabled(item.id)) {
+            Object.entries(items).forEach(([_, item]) => {
+                if (tloot.getItemEnabled(item.id)) {
                     toProcess++;
                     promise = new Promise(function (resolve, reject) {
                         promise.then((results) => {
                             setTimeout(() => {
-                                tlootWASM.setStatus(`${Math.floor(processed / toProcess * 100)}% - processing ${item.name}...`);
+                                tloot.setStatus(`${Math.floor(processed / toProcess * 100)}% - processing ${item.name}...`);
                                 processSingleItem(handler, item)
                                     .then((r) => {
                                         processed++;
@@ -389,28 +389,23 @@ tlootWASM.onReady = () => {
         }
 
         f.bytes().then((imgBytes) => {
-            tlootWASM.hideExampleImage();
-            tlootWASM.addImage(window.URL.createObjectURL(new Blob([imgBytes], { type: "image/png" })));
-            tlootWASM.setStatus(`processing...`);
+            tloot.hideExampleImage();
+            tloot.addImage(window.URL.createObjectURL(new Blob([imgBytes], { type: "image/png" })));
+            tloot.setStatus(`processing...`);
 
             setTimeout(() => {
                 const start = performance.now();
                 getProcessor(imgBytes)
                     .then(processAllItems)
                     .then(() => {
-                        tlootWASM.setStatus(`processing took ${((performance.now() - start) / 1000).toPrecision(2)}s.`);
+                        tloot.setStatus(`processing took ${((performance.now() - start) / 1000).toPrecision(2)}s.`);
                     })
-                    .catch(err => { tlootWASM.setError(err); })
+                    .catch(err => { tloot.setError(err); })
                     .finally(() => {
-                        tlootWASM.screenshotId++;
-                        tlootWASM.pasteEnabled = true;
+                        tloot.screenshotId++;
+                        tloot.pasteEnabled = true;
                     });
             }, 50);
         });
     });
-};
-
-const go = new Go();
-WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
-    go.run(result.instance);
 });
